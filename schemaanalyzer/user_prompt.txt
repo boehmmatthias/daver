@@ -1,4 +1,4 @@
-### Input 1: This is the table schema definition:
+### Input 1: This is the table schema definition for the table with name <TABLE_NAME>:
 
 <SCHEMA>
 

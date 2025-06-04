@@ -64,12 +64,12 @@ def get_analyzed_schema(db_config, table_list, model: str = 'gemma3:4b',
             host=ollama_host,
             headers={'Content-Type': 'application/json'},
         )
-
+        max_row_num = 30
         for table in table_list:
             table_schema = get_knowledge_base_schema_for_table(cursor=cursor, table_name=table,
                                                                db_connection_params=db_config)
-            table_rows_df = query_random_rows(cursor=cursor, table_name=table, num_rows=100)
-            max_rows = min(100, len(table_rows_df))
+            table_rows_df = query_random_rows(cursor=cursor, table_name=table, num_rows=max_row_num)
+            max_rows = min(max_row_num, len(table_rows_df))
             rows = []
 
             for i in range(max_rows):
@@ -77,6 +77,7 @@ def get_analyzed_schema(db_config, table_list, model: str = 'gemma3:4b',
                 rows.append(row)
 
             user_prompt = read_txt_file('user_prompt.txt')
+            user_prompt = user_prompt.replace('<TABLE_NAME>', table)
             user_prompt = user_prompt.replace('<SCHEMA>', json.dumps(table_schema))
             user_prompt = user_prompt.replace('<ROWS>', json.dumps(rows))
             messages = build_messages(system_prompt, few_shot_examples, user_prompt)
@@ -113,7 +114,6 @@ if __name__ == "__main__":
         'database': 'daver_db'
     }
 
-    #table_list = ['person', 'games', 'games_competitor']
-    table_list = ['games_competitor']
+    table_list = ['person', 'games', 'games_competitor']
     analyzed_schema = get_analyzed_schema(db_config=db_config, table_list=table_list)
     print(analyzed_schema)

@@ -39,7 +39,7 @@ These are some sample rows of the table data:
 
 Resulting output:
 example_A_assistant = {
-  "table_name": "book_inventory",
+  "name": "book_inventory",
   "context": "One row per title kept in the warehouse. Primary key is the 13-digit ISBN; titles are unique.",
   "fields": [
     {"name": "isbn",       "type": "char(13)",     "nullable": "NO",  "key": "PRI", "default": None, "extra": "", "context": "Global book identifier used as the primary key."},
@@ -93,7 +93,7 @@ These are some sample rows of the table data:
 Resulting output:
 
 {
-  "table_name": "iot_sensor_data",
+  "name": "iot_sensor_data",
   "context": "Time-series readings streamed from edge devices; composite primary key (sensor_id, ts_utc).",
   "fields": [
     {"name": "sensor_id",   "type": "varchar(40)", "nullable": "NO",  "key": "PRI", "default": None, "extra": "", "context": "UUID assigned to each deployed sensor."},
@@ -154,7 +154,7 @@ These are some sample rows of the table data:
 
 Resulting output:
 {
-  "table_name": "employee_time_off",
+  "name": "employee_time_off",
   "context": "Tracks vacation / sick-leave windows. One row per request; overlaps allowed until HR approval.",
   "fields": [
     {"name": "request_id",  "type": "bigint",    "nullable": "NO",  "key": "PRI", "default": None,  "extra": "auto_increment", "context": "Surrogate key issued by the application."},
