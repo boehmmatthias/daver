@@ -25,22 +25,14 @@ def build_messages(system_prompt: str, few_shot_examples: str, user_prompt: str)
     ]
 
 
-#client = Client(
-#    host='http://localhost:11434',
-#    headers={'Content-Type': 'application/json'},
-#)
+def load_json_schema(file_path: str):
+    """Load a JSON schema from a file."""
+    import json
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
-# response: ChatResponse = client.chat(model='gemma3:4b', messages=[
-#  {
-#    'role': 'user',
-#    'content': 'Hello World',
-#  },
-# ])
-#
-# print(response.message.content)
 
 if __name__ == "__main__":
-
     system_prompt = read_txt_file('system_prompt.txt')
     few_shot_examples = read_txt_file('few_shot_examples.txt')
     user_prompt = 'Find all the persons that won a gold medal in Paris.'
@@ -49,15 +41,15 @@ if __name__ == "__main__":
         host='http://localhost:11434',
         headers={'Content-Type': 'application/json'},
     )
+    # load JSON schema for the response
+    response_schema = load_json_schema('response_schema.json')
     response: ChatResponse = client.chat(
         model='gemma3:4b',
         messages=messages,
+        format=response_schema,
         stream=False,
         options={
             'temperature': 0.2
         }
     )
     print(response.message.content)
-
-
-
