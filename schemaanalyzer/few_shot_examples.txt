@@ -1,0 +1,168 @@
+FEW-SHOT EXAMPLE 1:
+This is the table schema definition:
+{
+  "name": "book_inventory",
+  "context": "",
+  "fields": [
+    {"name": "isbn",       "type": "char(13)",     "nullable": "NO",  "key": "PRI", "default": None, "extra": "",            "context": ""},
+    {"name": "title",      "type": "varchar(255)", "nullable": "NO",  "key": "",    "default": None, "extra": "",            "context": ""},
+    {"name": "author",     "type": "varchar(255)", "nullable": "YES", "key": "",    "default": None, "extra": "",            "context": ""},
+    {"name": "pub_year",   "type": "year",         "nullable": "YES", "key": "",    "default": None, "extra": "",            "context": ""},
+    {"name": "in_stock",   "type": "int",          "nullable": "NO",  "key": "",    "default": 0,    "extra": "",            "context": ""}
+  ]
+}
+
+These are some sample rows of the table data:
+[
+  {
+    "isbn": "9780306406157",
+    "title": "The Theory of Everything",
+    "author": "Stephen Hawking",
+    "pub_year": "2002",
+    "in_stock": 5
+  },
+  {
+    "isbn": "9780143127550",
+    "title": "Sapiens: A Brief History of Humankind",
+    "author": "Yuval Noah Harari",
+    "pub_year": "2015",
+    "in_stock": 0
+  },
+  {
+    "isbn": "9780262033848",
+    "title": "Introduction to Algorithms",
+    "author": null,
+    "pub_year": null,
+    "in_stock": 12
+  }
+]
+
+Resulting output:
+example_A_assistant = {
+  "table_name": "book_inventory",
+  "context": "One row per title kept in the warehouse. Primary key is the 13-digit ISBN; titles are unique.",
+  "fields": [
+    {"name": "isbn",       "type": "char(13)",     "nullable": "NO",  "key": "PRI", "default": None, "extra": "", "context": "Global book identifier used as the primary key."},
+    {"name": "title",      "type": "varchar(255)", "nullable": "NO",  "key": "",    "default": None, "extra": "", "context": "Human-readable title; duplicates possible across editions."},
+    {"name": "author",     "type": "varchar(255)", "nullable": "YES", "key": "",    "default": None, "extra": "", "context": "Main author(s); blank for works in the public domain."},
+    {"name": "pub_year",   "type": "year",         "nullable": "YES", "key": "",    "default": None, "extra": "", "context": "Four-digit publication year; helps with edition matching."},
+    {"name": "in_stock",   "type": "int",          "nullable": "NO",  "key": "",    "default": 0,    "extra": "", "context": "Physical copies currently available for sale."}
+  ]
+}
+
+FEW-SHOT EXAMPLE 2:
+This is the table schema definition:
+{
+  "name": "iot_sensor_data",
+  "context": "",
+  "fields": [
+    {"name": "sensor_id",   "type": "varchar(40)", "nullable": "NO",  "key": "PRI", "default": None, "extra": "", "context": ""},
+    {"name": "ts_utc",      "type": "timestamp",   "nullable": "NO",  "key": "PRI", "default": None, "extra": "", "context": ""},
+    {"name": "temperature", "type": "float",       "nullable": "YES", "key": "",    "default": None, "extra": "", "context": ""},
+    {"name": "humidity",    "type": "float",       "nullable": "YES", "key": "",    "default": None, "extra": "", "context": ""},
+    {"name": "battery_mv",  "type": "smallint",    "nullable": "YES", "key": "",    "default": 0, "extra": "", "context": ""}
+  ]
+}
+
+These are some sample rows of the table data:
+
+[
+  {
+    "sensor_id": "sensor-001",
+    "ts_utc": "2025-06-01 08:15:30",
+    "temperature": 22.5,
+    "humidity": 48.2,
+    "battery_mv": 3250
+  },
+  {
+    "sensor_id": "sensor-002",
+    "ts_utc": "2025-06-01 08:15:45",
+    "temperature": null,
+    "humidity": 51.0,
+    "battery_mv": 2980
+  },
+  {
+    "sensor_id": "sensor-001",
+    "ts_utc": "2025-06-01 08:16:00",
+    "temperature": 22.7,
+    "humidity": null,
+    "battery_mv": 3245
+  }
+]
+
+Resulting output:
+
+{
+  "table_name": "iot_sensor_data",
+  "context": "Time-series readings streamed from edge devices; composite primary key (sensor_id, ts_utc).",
+  "fields": [
+    {"name": "sensor_id",   "type": "varchar(40)", "nullable": "NO",  "key": "PRI", "default": None, "extra": "", "context": "UUID assigned to each deployed sensor."},
+    {"name": "ts_utc",      "type": "timestamp",   "nullable": "NO",  "key": "PRI", "default": None, "extra": "", "context": "ISO timestamp in UTC when the packet was recorded."},
+    {"name": "temperature", "type": "float",       "nullable": "YES", "key": "",    "default": None, "extra": "", "context": "Degrees Celsius; may be NULL if probe is faulty."},
+    {"name": "humidity",    "type": "float",       "nullable": "YES", "key": "",    "default": None, "extra": "", "context": "Relative humidity percentage."},
+    {"name": "battery_mv",  "type": "smallint",    "nullable": "YES", "key": "",    "default": None, "extra": "", "context": "Remaining battery in millivolts; values <3100 signal low-power state."}
+  ]
+}
+
+FEW-SHOT EXAMPLE 3:
+This is the table schema definition:
+{
+  "name": "employee_time_off",
+  "context": "",
+  "fields": [
+    {"name": "request_id",   "type": "bigint",       "nullable": "NO",  "key": "PRI", "default": None,    "extra": "auto_increment", "context": ""},
+    {"name": "emp_id",       "type": "int",          "nullable": "NO",  "key": "MUL", "default": None,    "extra": "",              "context": ""},
+    {"name": "start_date",   "type": "date",         "nullable": "NO",  "key": "",    "default": None,    "extra": "",              "context": ""},
+    {"name": "end_date",     "type": "date",         "nullable": "NO",  "key": "",    "default": None,    "extra": "",              "context": ""},
+    {"name": "reason_code",  "type": "char(3)",      "nullable": "YES", "key": "",    "default": "OTH",   "extra": "",              "context": ""},
+    {"name": "approved_by",  "type": "int",          "nullable": "YES", "key": "",    "default": None,    "extra": "",              "context": ""},
+    {"name": "approved_ts",  "type": "timestamp",    "nullable": "YES", "key": "",    "default": None,    "extra": "",              "context": ""}
+  ]
+}
+
+These are some sample rows of the table data:
+
+[
+  {
+    "request_id": 1001,
+    "emp_id": 47,
+    "start_date": "2025-07-01",
+    "end_date": "2025-07-05",
+    "reason_code": "VAC",
+    "approved_by": 12,
+    "approved_ts": "2025-06-15 09:30:00"
+  },
+  {
+    "request_id": 1002,
+    "emp_id": 82,
+    "start_date": "2025-06-20",
+    "end_date": "2025-06-22",
+    "reason_code": "SCK",
+    "approved_by": null,
+    "approved_ts": null
+  },
+  {
+    "request_id": 1003,
+    "emp_id": 47,
+    "start_date": "2025-12-24",
+    "end_date": "2025-12-31",
+    "reason_code": "OTH",
+    "approved_by": 12,
+    "approved_ts": "2025-06-20 14:45:00"
+  }
+]
+
+Resulting output:
+{
+  "table_name": "employee_time_off",
+  "context": "Tracks vacation / sick-leave windows. One row per request; overlaps allowed until HR approval.",
+  "fields": [
+    {"name": "request_id",  "type": "bigint",    "nullable": "NO",  "key": "PRI", "default": None,  "extra": "auto_increment", "context": "Surrogate key issued by the application."},
+    {"name": "emp_id",      "type": "int",       "nullable": "NO",  "key": "MUL", "default": None,  "extra": "",              "context": "Foreign key to employees table."},
+    {"name": "start_date",  "type": "date",      "nullable": "NO",  "key": "",    "default": None,  "extra": "",              "context": "First calendar day away from work, inclusive."},
+    {"name": "end_date",    "type": "date",      "nullable": "NO",  "key": "",    "default": None,  "extra": "",              "context": "Last calendar day away; must be ≥ start_date."},
+    {"name": "reason_code", "type": "char(3)",   "nullable": "YES", "key": "",    "default": "OTH", "extra": "",              "context": "Enum: VAC, SCK, MAT, OTH … default means “other”."},
+    {"name": "approved_by", "type": "int",       "nullable": "YES", "key": "",    "default": None,  "extra": "",              "context": "Manager’s emp_id once the request is approved."},
+    {"name": "approved_ts", "type": "timestamp", "nullable": "YES", "key": "",    "default": None,  "extra": "",              "context": "UTC timestamp when approval was logged."}
+  ]
+}

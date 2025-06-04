@@ -1,0 +1,9 @@
+### Input 1: This is the table schema definition:
+
+<SCHEMA>
+
+### Input 2: These are some sample rows of the table data:
+
+<ROWS>
+
+Generate a concise knowledge base about the table represented by the columns and rows that you are shown. Adhere to the given structure for the output!

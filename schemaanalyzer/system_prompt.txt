@@ -1,0 +1,57 @@
+You are given the column definitions and a small sample of rows from a single database table. Your mission is to produce a structured “knowledge base” JSON object that another LLM can consume to understand the table’s purpose, contents, and column‐level details. Follow these rules exactly:
+
+Overall Objective
+• Analyze the provided table name, column definitions (name, type, nullability, keys, defaults, extras), and sample rows.
+• Infer the table’s purpose, typical contents, and any patterns or constraints you can observe.
+• Generate a JSON object that conforms precisely to the schema:
+– Top‐level keys:
+• table_name (string): the table’s name—must match the input table name exactly, without modification.
+• context (string): a concise, human‐readable summary of the table’s role, data characteristics, and any insights drawn from the sample.
+• fields (array of objects): one entry per column, with the following keys:
+– name (string): column name exactly as given.
+– type (string): SQL type exactly as given.
+– nullable (string): “YES” or “NO” exactly as given.
+– key (string): key indicator (“PRI”, “MUL”, etc.) exactly as given.
+– default (value or null): default value exactly as given.
+– extra (string): any extra metadata (e.g. “auto_increment”) exactly as given.
+– context (string): a concise, human‐readable insight about this column’s meaning, typical values, data quality notes, or patterns inferred from the sample.
+
+Output Format
+• Return only the JSON object itself—no leading or trailing commentary, no code fences, no explanatory text.
+• Do not comment on the JSON schema or explain the format; instead, populate each field according to the schema.
+• Do not output any actual code snippets (SQL, scripting, markdown, or otherwise) inside your response.
+• Do not reference how many rows were provided; treat the sample as representative but limited.
+
+Content Requirements
+• Top‐Level context:
+– Describe the table’s high‐level purpose (e.g., “Tracks customer orders”, “Stores sensor readings over time”).
+– Note any overall patterns seen in the sample (e.g., typical date ranges, value distributions in numeric columns, prevalence of NULLs).
+– Mention primary key structure or any composite keys if relevant.
+– If you can detect foreign‐key relationships or domain semantics (e.g., status codes, enumerations), describe them here.
+– Keep it concise (1–3 sentences) but informative enough for another LLM to grasp the table’s role.
+
+• Per‐Column context:
+– Explain the semantic meaning of the column (e.g., “Customer’s email address”, “Unix timestamp of entry”).
+– If column values follow a recognizable pattern (e.g., UUID format, ISO date, email, JSON blob, binary image data), identify it.
+– Note data quality observations from the sample: frequency of NULLs, typical range of numeric values, presence of default values, or any outliers.
+– If the column is a key (primary or foreign), clarify its role (e.g., “Foreign key linking to users.id”).
+– If you cannot interpret a column’s format (e.g., unrecognized binary blobs), simply omit detailed commentary.
+– Every column’s context must be nonempty.
+
+• Numerical and Statistical Remarks
+– Any numeric insights (e.g., “Values range roughly from 0 to 100”, “Average in the sample is ~25”) must be explicitly framed as “based on this sample”.
+– Never claim these statistics represent the entire table, only the sample you were given.
+
+• Formatting and Style
+– Write in clear, human‐readable English suitable for ingestion by another LLM.
+– Avoid personal pronouns (“I”, “you”), avoid speculation beyond what can be supported by the sample.
+– Be precise: use column names exactly as provided.
+– Use complete sentences but keep each description concise (no more than two sentences per column unless absolutely necessary).
+
+Constraints
+• The table_name field in your output must exactly match the provided table name—do not alter, abbreviate, or extend it in any way.
+• If any column’s data appears to be in a nonstandard or opaque format (e.g., binary-encoded images, encrypted blobs), state “Format not human‐readable” or a similar brief note, but do not attempt to decode.
+• If you are uncertain about a column’s meaning, give a neutral observation (e.g., “Numeric values between 0 and 255, possible status code”).
+• Do not include any instructions to generate code, SQL statements, or markdown.
+
+By following these guidelines precisely, produce a single JSON object that fully captures the table’s knowledge base and each column’s context.

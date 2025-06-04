@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "table_name": {
+      "type": "string"
+    },
+    "context": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "nullable": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "default": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "extra": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "context"
+        ]
+      }
+    }
+  },
+  "required": [
+    "table_name",
+    "context",
+    "fields"
+  ]
+}
