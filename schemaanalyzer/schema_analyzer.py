@@ -102,18 +102,5 @@ def get_analyzed_schema(db_config, table_list, model: str = 'gemma3:4b',
         if connection and connection.is_connected():
             connection.close()
 
-    return result
+    return json.dumps(result)
 
-
-if __name__ == "__main__":
-    db_config = {
-        'host': 'localhost',
-        'port': 3306,
-        'user': 'daver',
-        'password': 'pizzatime',
-        'database': 'daver_db'
-    }
-
-    table_list = ['person', 'games', 'games_competitor']
-    analyzed_schema = get_analyzed_schema(db_config=db_config, table_list=table_list)
-    print(analyzed_schema)
