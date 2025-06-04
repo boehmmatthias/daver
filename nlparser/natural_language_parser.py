@@ -1,10 +1,14 @@
+import os
+import json
 from ollama import ChatResponse
 from ollama import Client
 
 def read_txt_file(file_path) -> str:
     """Read the content of a text file and return it as a string."""
-    with open(file_path, 'r') as file:
-        return file.read().strip()
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(base_dir, file_path)
+    with open(full_path, "r") as f:
+        return f.read().strip()
 
 
 def build_messages(system_prompt: str, few_shot_examples: str, user_prompt: str):
@@ -27,8 +31,9 @@ def build_messages(system_prompt: str, few_shot_examples: str, user_prompt: str)
 
 def load_json_schema(file_path: str):
     """Load a JSON schema from a file."""
-    import json
-    with open(file_path, 'r') as file:
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(base_dir, file_path)
+    with open(full_path, 'r') as file:
         return json.load(file)
 
 
@@ -56,9 +61,4 @@ def get_processed_query(natural_query: str, model: str = 'gemma3:4b', host: str 
     )
     return response.message.content
 
-
-if __name__ == "__main__":
-    user_prompt = 'Find all the persons that won a gold medal in Paris.'
-    processed_query = get_processed_query(user_prompt)
-    print(f"Processed Query for '{user_prompt}':\n{processed_query}\n")
 

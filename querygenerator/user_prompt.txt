@@ -1,0 +1,9 @@
+### Input 1: Processed Natural Language Query (JSON)
+
+<NLQUERY>
+
+### Input 2: Database Schema (JSON)
+
+<SCHEMA>
+
+Generate a complete SQL query that fulfills the request defined by Input 1, using the table and field definitions from Input 2.
