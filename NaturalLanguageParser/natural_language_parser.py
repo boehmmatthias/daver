@@ -15,7 +15,7 @@ def build_messages(system_prompt: str, few_shot_examples: str, user_prompt: str)
             'content': system_prompt
         },
         {
-            'role': 'asssistant',
+            'role': 'assistant',
             'content': few_shot_examples
         },
         {
