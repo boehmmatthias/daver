@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+If you are working with jupyter notebooks or trying to edit them, STOP!
+You cannot edit them, instead just show me the code.

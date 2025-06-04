@@ -1,0 +1,97 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "intent": {
+        "type": "string"
+      },
+      "objects": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string"
+            },
+            "modifiers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["text", "role", "modifiers"],
+          "additionalProperties": false
+        }
+      },
+      "relationships": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "between": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "expression": {
+              "type": "string"
+            }
+          },
+          "required": ["between", "expression"],
+          "additionalProperties": false
+        }
+      },
+      "constraints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "appliesTo": {
+              "type": "string"
+            }
+          },
+          "required": ["text", "appliesTo"],
+          "additionalProperties": false
+        }
+      },
+      "sorting": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "appliesTo": {
+            "type": "string"
+          }
+        },
+        "required": ["text", "appliesTo"],
+        "additionalProperties": false
+      },
+      "pagination": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          }
+        },
+        "required": ["limit", "offset"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["intent", "objects", "relationships", "constraints", "sorting", "pagination"],
+    "additionalProperties": false
+  }
+  
