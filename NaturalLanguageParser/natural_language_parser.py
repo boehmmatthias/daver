@@ -32,19 +32,21 @@ def load_json_schema(file_path: str):
         return json.load(file)
 
 
-if __name__ == "__main__":
+def get_processed_query(natural_query: str, model: str = 'gemma3:4b', host: str = 'http://localhost:11434') -> str:
+    """Process the natural language query to a structured format."""
+    # build messages prompt
     system_prompt = read_txt_file('system_prompt.txt')
     few_shot_examples = read_txt_file('few_shot_examples.txt')
-    user_prompt = 'Find all the persons that won a gold medal in Paris.'
-    messages = build_messages(system_prompt, few_shot_examples, user_prompt)
-    client = Client(
-        host='http://localhost:11434',
-        headers={'Content-Type': 'application/json'},
-    )
+    messages = build_messages(system_prompt, few_shot_examples, natural_query)
+
     # load JSON schema for the response
     response_schema = load_json_schema('response_schema.json')
+    client = Client(
+        host=host,
+        headers={'Content-Type': 'application/json'},
+    )
     response: ChatResponse = client.chat(
-        model='gemma3:4b',
+        model=model,
         messages=messages,
         format=response_schema,
         stream=False,
@@ -52,4 +54,11 @@ if __name__ == "__main__":
             'temperature': 0.2
         }
     )
-    print(response.message.content)
+    return response.message.content
+
+
+if __name__ == "__main__":
+    user_prompt = 'Find all the persons that won a gold medal in Paris.'
+    processed_query = get_processed_query(user_prompt)
+    print(f"Processed Query for '{user_prompt}':\n{processed_query}\n")
+
