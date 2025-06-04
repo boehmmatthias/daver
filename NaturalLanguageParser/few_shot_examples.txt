@@ -1,0 +1,283 @@
+FEW-SHOT EXAMPLE 1:
+Natural Language: "Show all customers."
+Output:
+{
+  "intent": "show",
+  "objects": [
+    {
+      "text": "customers",
+      "role": "primary",
+      "modifiers": []
+    }
+  ]
+}
+FEW-SHOT EXAMPLE 2:
+Natural Language: "List active users."
+Output:
+{
+  "intent": "list",
+  "objects": [
+    {
+      "text": "users",
+      "role": "primary",
+      "modifiers": ["active"]
+    }
+  ]
+}
+FEW-SHOT EXAMPLE 3:
+Natural Language: "Find orders placed in December 2024."
+Output:
+{
+  "intent": "find",
+  "objects": [
+    {
+      "text": "orders",
+      "role": "primary",
+      "modifiers": []
+    }
+  ],
+  "constraints": [
+    {
+      "text": "placed in December 2024",
+      "appliesTo": "orders"
+    }
+  ]
+}
+FEW-SHOT EXAMPLE 4:
+Natural Language: "Get the email addresses of subscribers"
+Output:
+{
+  "intent": "get",
+  "objects": [
+    {
+      "text": "email addresses",
+      "role": "secondary",
+      "modifiers": []
+    },
+    {
+      "text": "subscribers",
+      "role": "secondary",
+      "modifiers": []
+    }
+  ],
+  "relationships": [
+    {
+      "between": ["email addresses", "subscribers"],
+      "expression": "of"
+    }
+  ]
+}
+
+FEW-SHOT EXAMPLE 5:
+Natural Language: "Show me top 5 products sorted by rating."
+Output:
+{
+  "intent": "show",
+  "objects": [
+    {
+      "text": "products",
+      "role": "primary",
+      "modifiers": []
+    }
+  ],
+  "sorting": {
+    "text": "sorted by rating",
+    "appliesTo": "products"
+  },
+  "pagination": {
+    "limit": 5,
+  }
+}
+
+FEW-SHOT EXAMPLE 6:
+Natural Language: "List files created after January 10."
+Output:
+{
+  "intent": "list",
+  "objects": [
+    {
+      "text": "files",
+      "role": "primary",
+      "modifiers": []
+    }
+  ],
+  "constraints": [
+    {
+      "text": "created after January 10",
+      "appliesTo": "files"
+    }
+  ]
+}
+FEW-SHOT EXAMPLE 7:
+Natural Language: "List orders and their shipment status."
+Output:
+{
+  "intent": "list",
+  "objects": [
+    {
+      "text": "orders",
+      "role": "primary",
+      "modifiers": []
+    },
+    {
+      "text": "their shipment status",
+      "role": "secondary",
+      "modifiers": []
+    }
+  ],
+  "relationships": [
+    {
+      "between": ["orders", "their shipment status"],
+      "expression": "and"
+    }
+  ]
+}
+FEW-SHOT EXAMPLE 8:
+Natural Language: "Show me employees who work in the sales department and have been there since 2019, sorted by hire date descending, limit 20."
+Output:
+{
+  "intent": "show",
+  "objects": [
+    {
+      "text": "employees",
+      "role": "primary",
+      "modifiers": []
+    },
+    {
+      "text": "sales department",
+      "role": "secondary",
+      "modifiers": []
+    }
+  ],
+  "relationships": [
+    {
+      "between": ["employees", "sales department"],
+      "expression": "who work in"
+    }
+  ],
+  "constraints": [
+    {
+      "text": "have been there since 2019",
+      "appliesTo": "employees"
+    }
+  ],
+  "sorting": {
+    "text": "sorted by hire date descending",
+    "appliesTo": "employees"
+  },
+  "pagination": {
+    "limit": 20
+  }
+}
+FEW-SHOT EXAMPLE 9:
+Natural Language: "Find all books written by author John Doe or Jane Smith published after 2018."
+Output:
+{
+  "intent": "find",
+  "objects": [
+    {
+      "text": "books",
+      "role": "primary",
+      "modifiers": []
+    },
+    {
+      "text": "author John Doe",
+      "role": "secondary",
+      "modifiers": []
+    },
+    {
+      "text": "Jane Smith",
+      "role": "secondary",
+      "modifiers": []
+    }
+  ],
+  "relationships": [
+    {
+      "between": ["books", "author John Doe"],
+      "expression": "written by"
+    },
+    {
+      "between": ["author John Doe", "Jane Smith"],
+      "expression": "or"
+    }
+  ],
+  "constraints": [
+    {
+      "text": "published after 2018",
+      "appliesTo": "books"
+    }
+  ]
+}
+
+FEW-SHOT EXAMPLE 10:
+Natural Language: "List customers who have purchased product A and product B in the last quarter, limit 100."
+Output:
+{
+  "intent": "list",
+  "objects": [
+    {
+      "text": "customers",
+      "role": "primary",
+      "modifiers": []
+    },
+    {
+      "text": "product A",
+      "role": "secondary",
+      "modifiers": []
+    },
+    {
+      "text": "product B",
+      "role": "secondary",
+      "modifiers": []
+    }
+  ],
+  "relationships": [
+    {
+      "between": ["customers", "product A"],
+      "expression": "who have purchased"
+    },
+    {
+      "between": ["product A", "product B"],
+      "expression": "and"
+    }
+  ],
+  "constraints": [
+    {
+      "text": "in the last quarter",
+      "appliesTo": "customers"
+    }
+  ],
+  "pagination": {
+    "limit": 100
+  }
+}
+FEW-SHOT EXAMPLE 11:
+Natural Language: "Which sport was played the most in all the olympic games?"
+Output:
+{
+  "intent": "find",
+  "objects": [
+    {
+      "text": "sport",
+      "role": "primary",
+      "modifiers": []
+    },
+    {
+      "text": "all of the olympics",
+      "role": "secondary",
+      "modifiers": []
+    }
+  ],
+  "relationships": [
+    {
+      "between": ["sport", "all the olympic games"],
+      "expression": "in"
+    }
+  ],
+  "constraints": [
+    {
+      "text": "played the most",
+      "appliesTo": "sport"
+    }
+  ]
+}
