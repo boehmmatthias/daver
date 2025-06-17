@@ -46,9 +46,7 @@ def judge_sql_responses(sql_responses: list[str], user_nl_query: str, processed_
     messages = build_messages(system_prompt, user_prompt)
     
     # check if model is a thinking model
-    thinking_model = model.startswith('deepseek-r1')
-    if thinking_model:
-        print("🤔 Thinking...")
+    thinking_model = False
         
         
     client = Client(
@@ -62,9 +60,10 @@ def judge_sql_responses(sql_responses: list[str], user_nl_query: str, processed_
         format={
             "type": "object",
             "properties": {
+                "thinking": {"type": "string"},
                 "choice": {"enum": [f"Response {i}" for i in range(len(sql_responses))]}
             },
-            "required": ["choice"]
+            "required": ["choice", "thinking"]
         },
         options={
             # 'temperature': 0.1

@@ -57,7 +57,12 @@ if __name__ == "__main__":
     for i, sql in enumerate(sql_responses):
         print(f'Response {i}: \n{sql}')
     
-    resp = judge_sql_responses(sql_responses, user_prompt, processed_query, analyzed_schema, model='gemma3:4b')
+    resp = judge_sql_responses(sql_responses, user_prompt, processed_query, analyzed_schema, model='qwen3:8b')
+    # check if thinking field is present
+    resp_json = json.loads(resp)
+    if 'thinking' in resp_json:
+        print(f'Thinking: {resp_json["thinking"]}')
+
     resp = json.loads(resp)['choice']
     print(f'Judged Response: {resp}')
     

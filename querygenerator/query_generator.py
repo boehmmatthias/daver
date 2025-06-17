@@ -51,7 +51,7 @@ def get_database_query(processed_nl_query: str, database_schema: str, model: str
         messages=messages,
         stream=thinking_model,
         options= {
-            'temperature': 0.7,
+            # 'temperature': 0.7,
             'num_ctx': 16384
         }
     )
