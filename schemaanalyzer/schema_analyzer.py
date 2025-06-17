@@ -2,6 +2,7 @@ import json
 import os
 import mysql.connector
 from ollama import Client, ChatResponse
+import yaml
 
 from schemaanalyzer.mysql_utils import get_knowledge_base_schema_for_table, query_random_rows
 
@@ -91,7 +92,7 @@ def get_analyzed_schema(db_config, table_list, model: str = 'gemma3:4b',
                     'temperature': 0.1
                 }
             )
-            result['tables'].append(response.message.content)
+            result['tables'].append(json.loads(response.message.content))
 
     except mysql.connector.Error as err:
         print(f"Error connecting to database: {err}")
@@ -102,5 +103,7 @@ def get_analyzed_schema(db_config, table_list, model: str = 'gemma3:4b',
         if connection and connection.is_connected():
             connection.close()
 
-    return json.dumps(result)
+    # Convert to YAML format
+    yaml_string = yaml.dump(result, allow_unicode=True, default_flow_style=False, sort_keys=False)
+    return yaml_string
 
