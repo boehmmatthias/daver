@@ -18,10 +18,10 @@ def build_messages(system_prompt: str, few_shot_examples: str, user_prompt: str)
             'role': 'system',
             'content': system_prompt
         },
-        {
-            'role': 'assistant',
-            'content': few_shot_examples
-        },
+        # {
+        #     'role': 'assistant',
+        #     'content': few_shot_examples
+        # },
         {
             'role': 'user',
             'content': user_prompt
@@ -53,7 +53,7 @@ def get_processed_query(natural_query: str, model: str = 'gemma3:4b', host: str 
     response: ChatResponse = client.chat(
         model=model,
         messages=messages,
-        format=response_schema,
+        # format=response_schema,
         stream=False,
         options={
             'temperature': 0.2

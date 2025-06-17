@@ -32,6 +32,14 @@ def get_database_query(processed_nl_query: str, database_schema: str, model: str
     user_prompt = user_prompt.replace('<NLQUERY>', processed_nl_query)
     user_prompt = user_prompt.replace('<SCHEMA>', database_schema)
     messages = build_messages(system_prompt, user_prompt)
+    
+    
+    # check if model is a thinking model
+    thinking_model = model.startswith('deepseek-r1')
+    if thinking_model:
+        print("🤔 Thinking...")
+        
+        
     client = Client(
         host=host,
         headers={'Content-Type': 'application/json'},
@@ -39,10 +47,23 @@ def get_database_query(processed_nl_query: str, database_schema: str, model: str
     response: ChatResponse = client.chat(
         model=model,
         messages=messages,
-        stream=False,
+        stream=thinking_model,
         options={
-            'temperature': 0.2
+            # 'temperature': 0.1
         }
     )
+    
+
+    if thinking_model:
+        for chunk in response:
+            content = chunk.message.content
+            if '</think>' in content:
+                thinking_part = content.split('</think>')[0]
+                print(thinking_part, end='', flush=True)
+                break;
+            else:
+                print(content, end='', flush=True)
+    
+    
     return response.message.content
 

@@ -1,9 +1,14 @@
-### Input 1: Processed Natural Language Query (JSON)
+Analyse the schema for tables and properties. Select, Join and Filter based on the request in Input1.
+Use only the tables and Information contained in Input 2
+Generate a complete SQL query that fulfills these requirements.
+Only generate valid SQL.
+Do not make up tables.
+Do not write text or explanations.
 
+Input 1: Processed Natural Language Query (JSON)
 <NLQUERY>
 
-### Input 2: Database Schema (JSON)
-
+Input 2: Database Schema (JSON)
 <SCHEMA>
 
-Generate a complete SQL query that fulfills the request defined by Input 1, using the table and field definitions from Input 2.
+
