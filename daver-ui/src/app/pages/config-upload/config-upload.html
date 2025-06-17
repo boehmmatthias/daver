@@ -17,9 +17,11 @@
   
   <div class="landing-content">
     <!-- Logo and Project Name -->
-    <div class="brand-section">
-      <img [src]="isAnalyzing() ? 'assets/images/daver_detective.png' : 'assets/images/daver.png'" alt="Daver Logo" class="logo">
-    </div>
+    @if (isAnalyzing()) {
+      <div class="brand-section">
+        <img src="assets/images/daver_detective.png" alt="Daver Logo" class="logo">
+      </div>
+    } 
 
     <!-- Config Upload Card -->
     <mat-card class="upload-card" *ngIf="!isAnalyzing()">
