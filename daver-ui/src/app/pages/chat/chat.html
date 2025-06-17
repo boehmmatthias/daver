@@ -10,10 +10,10 @@
         <p class="chat-description">
           Ask questions about your data in natural language and get instant insights.
         </p>
-        
+
         <!-- Chat Messages Area -->
         <div class="chat-messages" #chatMessages>
-          <div class="message" 
+          <div class="message"
                [class.user-message]="message.type === 'user'"
                [class.bot-message]="message.type === 'bot'"
                *ngFor="let message of allMessages()">
@@ -21,8 +21,15 @@
               <div class="message-text">{{ message.text }}</div>
               <div class="message-time">{{ message.timestamp | date:'shortTime' }}</div>
             </div>
+            
+            <!-- Data Table for bot messages with fetched data -->
+            <daver-data-table 
+              *ngIf="message.type === 'bot' && message.fetchedData"
+              [data]="message.fetchedData"
+              class="message-data-table">
+            </daver-data-table>
           </div>
-          
+
           <!-- Loading indicator for bot response -->
           <div class="message bot-message" *ngIf="isLoading()">
             <div class="message-content">
@@ -33,13 +40,13 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Chat Input Area -->
         <div class="chat-input-area">
           <mat-form-field class="chat-input-field" appearance="outline">
             <mat-label>Ask a question about your data...</mat-label>
-            <textarea 
-              matInput 
+            <textarea
+              matInput
               [ngModel]="userInput()"
               (ngModelChange)="userInput.set($event)"
               (keydown)="onKeyDown($event)"
@@ -52,6 +59,23 @@
             </textarea>
             <mat-icon matSuffix (click)="sendMessage()" class="send-icon">send</mat-icon>
           </mat-form-field>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" *ngIf="errorMessage()">
+          <div class="error-content">
+            <mat-icon class="error-icon">error_outline</mat-icon>
+            <div class="error-text">
+              <h4>Message Failed</h4>
+              <p>{{ errorMessage() }}</p>
+            </div>
+            <button
+              mat-icon-button
+              class="error-close"
+              (click)="errorMessage.set(null)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
         </div>
       </mat-card-content>
     </mat-card>
