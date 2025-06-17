@@ -1,283 +1,58 @@
-FEW-SHOT EXAMPLE 1:
-Natural Language: "Show all customers."
+FEW SHOT EXAMPLE 1:
+Input:
+List users who signed up last month
 Output:
-{
-  "intent": "show",
-  "objects": [
-    {
-      "text": "customers",
-      "role": "primary",
-      "modifiers": []
-    }
-  ]
-}
+List all users who registered during the previous calendar month
+
 FEW-SHOT EXAMPLE 2:
-Natural Language: "List active users."
+Input:
+Get total sales for Q1
 Output:
-{
-  "intent": "list",
-  "objects": [
-    {
-      "text": "users",
-      "role": "primary",
-      "modifiers": ["active"]
-    }
-  ]
-}
+Retrieve the total sales figures for the first quarter of the year
+
 FEW-SHOT EXAMPLE 3:
-Natural Language: "Find orders placed in December 2024."
+Input:
+Show employees in department 5
 Output:
-{
-  "intent": "find",
-  "objects": [
-    {
-      "text": "orders",
-      "role": "primary",
-      "modifiers": []
-    }
-  ],
-  "constraints": [
-    {
-      "text": "placed in December 2024",
-      "appliesTo": "orders"
-    }
-  ]
-}
+Show all employees who belong to department number 5
+
 FEW-SHOT EXAMPLE 4:
-Natural Language: "Get the email addresses of subscribers"
+Which products have stock less than 10
 Output:
-{
-  "intent": "get",
-  "objects": [
-    {
-      "text": "email addresses",
-      "role": "secondary",
-      "modifiers": []
-    },
-    {
-      "text": "subscribers",
-      "role": "secondary",
-      "modifiers": []
-    }
-  ],
-  "relationships": [
-    {
-      "between": ["email addresses", "subscribers"],
-      "expression": "of"
-    }
-  ]
-}
+Find all products with a stock quantity of fewer than 10 units
 
 FEW-SHOT EXAMPLE 5:
-Natural Language: "Show me top 5 products sorted by rating."
+Input:
+Give me orders placed by customer John Doe
 Output:
-{
-  "intent": "show",
-  "objects": [
-    {
-      "text": "products",
-      "role": "primary",
-      "modifiers": []
-    }
-  ],
-  "sorting": {
-    "text": "sorted by rating",
-    "appliesTo": "products"
-  },
-  "pagination": {
-    "limit": 5,
-  }
-}
+Retrieve all orders placed by the customer named John Doe
 
 FEW-SHOT EXAMPLE 6:
-Natural Language: "List files created after January 10."
+Input:
+Count number of articles published in 2019
 Output:
-{
-  "intent": "list",
-  "objects": [
-    {
-      "text": "files",
-      "role": "primary",
-      "modifiers": []
-    }
-  ],
-  "constraints": [
-    {
-      "text": "created after January 10",
-      "appliesTo": "files"
-    }
-  ]
-}
+Count the total number of articles published in the year 2019
+
 FEW-SHOT EXAMPLE 7:
-Natural Language: "List orders and their shipment status."
+Input:
+avg salary software eng
 Output:
-{
-  "intent": "list",
-  "objects": [
-    {
-      "text": "orders",
-      "role": "primary",
-      "modifiers": []
-    },
-    {
-      "text": "their shipment status",
-      "role": "secondary",
-      "modifiers": []
-    }
-  ],
-  "relationships": [
-    {
-      "between": ["orders", "their shipment status"],
-      "expression": "and"
-    }
-  ]
-}
+Calculate the average salary of employees with the job title “Software Engineer”
+
 FEW-SHOT EXAMPLE 8:
-Natural Language: "Show me employees who work in the sales department and have been there since 2019, sorted by hire date descending, limit 20."
+Input:
+all customers from Germany who spent over 1000
 Output:
-{
-  "intent": "show",
-  "objects": [
-    {
-      "text": "employees",
-      "role": "primary",
-      "modifiers": []
-    },
-    {
-      "text": "sales department",
-      "role": "secondary",
-      "modifiers": []
-    }
-  ],
-  "relationships": [
-    {
-      "between": ["employees", "sales department"],
-      "expression": "who work in"
-    }
-  ],
-  "constraints": [
-    {
-      "text": "have been there since 2019",
-      "appliesTo": "employees"
-    }
-  ],
-  "sorting": {
-    "text": "sorted by hire date descending",
-    "appliesTo": "employees"
-  },
-  "pagination": {
-    "limit": 20
-  }
-}
+Find all customers located in Germany whose total spending exceeds 1,000 units
+
 FEW-SHOT EXAMPLE 9:
-Natural Language: "Find all books written by author John Doe or Jane Smith published after 2018."
+Input:
+show top 10 products by revenue
 Output:
-{
-  "intent": "find",
-  "objects": [
-    {
-      "text": "books",
-      "role": "primary",
-      "modifiers": []
-    },
-    {
-      "text": "author John Doe",
-      "role": "secondary",
-      "modifiers": []
-    },
-    {
-      "text": "Jane Smith",
-      "role": "secondary",
-      "modifiers": []
-    }
-  ],
-  "relationships": [
-    {
-      "between": ["books", "author John Doe"],
-      "expression": "written by"
-    },
-    {
-      "between": ["author John Doe", "Jane Smith"],
-      "expression": "or"
-    }
-  ],
-  "constraints": [
-    {
-      "text": "published after 2018",
-      "appliesTo": "books"
-    }
-  ]
-}
+Show the top ten products ranked by total revenue generated
 
 FEW-SHOT EXAMPLE 10:
-Natural Language: "List customers who have purchased product A and product B in the last quarter, limit 100."
+Input:
+find orders last week
 Output:
-{
-  "intent": "list",
-  "objects": [
-    {
-      "text": "customers",
-      "role": "primary",
-      "modifiers": []
-    },
-    {
-      "text": "product A",
-      "role": "secondary",
-      "modifiers": []
-    },
-    {
-      "text": "product B",
-      "role": "secondary",
-      "modifiers": []
-    }
-  ],
-  "relationships": [
-    {
-      "between": ["customers", "product A"],
-      "expression": "who have purchased"
-    },
-    {
-      "between": ["product A", "product B"],
-      "expression": "and"
-    }
-  ],
-  "constraints": [
-    {
-      "text": "in the last quarter",
-      "appliesTo": "customers"
-    }
-  ],
-  "pagination": {
-    "limit": 100
-  }
-}
-FEW-SHOT EXAMPLE 11:
-Natural Language: "Which sport was played the most in all the olympic games?"
-Output:
-{
-  "intent": "find",
-  "objects": [
-    {
-      "text": "sport",
-      "role": "primary",
-      "modifiers": []
-    },
-    {
-      "text": "all of the olympics",
-      "role": "secondary",
-      "modifiers": []
-    }
-  ],
-  "relationships": [
-    {
-      "between": ["sport", "all the olympic games"],
-      "expression": "in"
-    }
-  ],
-  "constraints": [
-    {
-      "text": "played the most",
-      "appliesTo": "sport"
-    }
-  ]
-}
+Find all orders placed during the previous calendar week
