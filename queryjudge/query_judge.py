@@ -44,11 +44,6 @@ def judge_sql_responses(sql_responses: list[str], user_nl_query: str, processed_
     # replace user prompt placeholder with the actual processed query
     user_prompt = user_prompt.replace('<RESPONSES>', templates_str)
     messages = build_messages(system_prompt, user_prompt)
-    
-    # check if model is a thinking model
-    thinking_model = model.startswith('deepseek-r1')
-    if thinking_model:
-        print("🤔 Thinking...")
         
         
     client = Client(
@@ -58,30 +53,19 @@ def judge_sql_responses(sql_responses: list[str], user_nl_query: str, processed_
     response: ChatResponse = client.chat(
         model=model,
         messages=messages,
-        stream=thinking_model,
         format={
             "type": "object",
             "properties": {
+                "thinking": {"type": "string"},
                 "choice": {"enum": [f"Response {i}" for i in range(len(sql_responses))]}
             },
             "required": ["choice"]
         },
         options={
             # 'temperature': 0.1
-            'num_ctx': 16384
+            'num_ctx': 40960
         }
     )
-    
-
-    if thinking_model:
-        for chunk in response:
-            content = chunk.message.content
-            if '</think>' in content:
-                thinking_part = content.split('</think>')[0]
-                print(thinking_part, end='', flush=True)
-                break;
-            else:
-                print(content, end='', flush=True)
     
     
     return response.message.content
