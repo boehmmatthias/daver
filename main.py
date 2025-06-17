@@ -40,7 +40,7 @@ if __name__ == "__main__":
     reanalyze_schema = True
     if reanalyze_schema:
         # If reanalyzing schema, we need to query the database for the schema
-        analyzed_schema = get_analyzed_schema(db_config=db_config, table_list=table_list, model='starcoder2:15b')
+        analyzed_schema = get_analyzed_schema(db_config=db_config, table_list=table_list, model='gemma3:4b')
         print('Schema analyzed successfully.')
         # save the analyzed schema to a file for debugging
         with open('analyzed_schema.yaml', 'w') as f:
@@ -52,12 +52,12 @@ if __name__ == "__main__":
         print('Schema loaded from file.')
 
     n = 10
-    sql_responses = [get_database_query(processed_query, analyzed_schema, model='sqlcoder:15b') for _ in range(n)]
+    sql_responses = [get_database_query(processed_query, analyzed_schema, model='deepseek-coder:6.7b') for _ in range(n)]
     
     for i, sql in enumerate(sql_responses):
         print(f'Response {i}: \n{sql}')
     
-    resp = judge_sql_responses(sql_responses, user_prompt, processed_query, analyzed_schema, model='phi4-reasoning:14b')
+    resp = judge_sql_responses(sql_responses, user_prompt, processed_query, analyzed_schema, model='deepseek-coder:6.7b')
     # check if thinking field is present
     resp_json = json.loads(resp)
     if 'thinking' in resp_json:
