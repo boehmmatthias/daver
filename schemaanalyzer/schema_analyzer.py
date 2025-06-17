@@ -41,13 +41,17 @@ def build_messages(system_prompt: str, few_shot_examples: str, user_prompt: str)
     ]
 
 
-def get_analyzed_schema(db_config, table_list, model: str = 'gemma3:4b',
+def get_analyzed_schema(db_config, model: str = 'gemma3:4b',
                         ollama_host: str = 'http://localhost:11434'):
     """Analyze the database schema and return a structured description."""
 
     connection = None
     cursor = None
     result = None
+    
+    table_list = get_all_table_names(db_config)
+    print(f"Found {len(table_list)} tables")
+    print(table_list)
 
     try:
         connection = mysql.connector.connect(**db_config)
@@ -107,3 +111,36 @@ def get_analyzed_schema(db_config, table_list, model: str = 'gemma3:4b',
     yaml_string = yaml.dump(result, allow_unicode=True, default_flow_style=False, sort_keys=False)
     return yaml_string
 
+def get_all_table_names(connection_params):
+    """
+    Get all table names from the database
+    
+    Args:
+        connection_params (dict): Database connection parameters
+    
+    Returns:
+        list: List of table names
+    """
+    connection = None
+    cursor = None
+    table_names = []
+
+    try:
+        connection = mysql.connector.connect(**connection_params)
+        cursor = connection.cursor()
+
+        # Get all table names
+        cursor.execute("SHOW TABLES")
+        tables = cursor.fetchall()
+        table_names = [table[0] for table in tables]
+
+    except mysql.connector.Error as err:
+        print(f"Error getting table names: {err}")
+        raise err
+    finally:
+        if cursor:
+            cursor.close()
+        if connection and connection.is_connected():
+            connection.close()
+
+    return table_names

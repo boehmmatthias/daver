@@ -22,25 +22,10 @@ if __name__ == "__main__":
         'password': 'pizzatime',
         'database': 'daver_db'
     }
-    
-    table_list = [
-        'person',
-        'games',
-        'city',
-        'games_competitor',
-        'competitor_event',
-        'medal',
-        'event',
-        'games_city',
-        'noc_region',
-        'person_region',
-        'sport'
-    ]
-    table_list_small = ['person']
     reanalyze_schema = True
     if reanalyze_schema:
         # If reanalyzing schema, we need to query the database for the schema
-        analyzed_schema = get_analyzed_schema(db_config=db_config, table_list=table_list, model='gemma3:4b')
+        analyzed_schema = get_analyzed_schema(db_config=db_config, model='gemma3:4b')
         print('Schema analyzed successfully.')
         # save the analyzed schema to a file for debugging
         with open('analyzed_schema.yaml', 'w') as f:
