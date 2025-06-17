@@ -1,306 +1,258 @@
 database: mysql
 tables:
 - table_name: person
-  context: This table stores information about individuals, including their full name,
-    gender, height, and weight. The primary key is the 'id' field, which is an auto-incrementing
-    integer.  The sample data shows a diverse set of individuals with varying heights
-    and weights, and a mix of male and female genders.
+  context: ''
   fields:
   - name: id
-    context: The unique identifier for each person in the table. It is an auto-incrementing
-      integer, serving as the primary key.
+    context: ''
     type: int
     nullable: 'NO'
     key: PRI
     default: null
     extra: auto_increment
   - name: full_name
-    context: The complete name of the individual.  The sample data shows names with
-      and without nicknames.
+    context: ''
     type: varchar(500)
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
   - name: gender
-    context: The gender of the individual. The sample data contains both male ('M')
-      and female ('F') entries.
+    context: ''
     type: varchar(10)
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
   - name: height
-    context: The height of the individual in centimeters. The sample values range
-      from 0 to 195 cm.
+    context: ''
     type: int
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
   - name: weight
-    context: The weight of the individual in kilograms. The sample values range from
-      0 to 90 kg.
+    context: ''
     type: int
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
 - table_name: games
-  context: This table tracks information about various Olympic Games. It includes
-    the year the games were held, the name of the games, and the season they took
-    place in. The 'id' column is a primary key and auto-incrementing integer. The
-    sample data shows a range of years and game names, primarily focusing on Summer
-    and Winter Olympic Games.
+  context: ''
   fields:
   - name: id
-    context: Unique identifier for each game event, serving as the primary key. It
-      is an integer and auto-incrementing.
+    context: ''
     type: int
     nullable: 'NO'
     key: PRI
     default: null
     extra: auto_increment
   - name: games_year
-    context: The year in which the Olympic Games were held. Values range from 1896
-      to 2014.
+    context: ''
     type: int
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
   - name: games_name
-    context: The name of the Olympic Games event.  Values include '1932 Summer', '2008
-      Summer', etc.
+    context: ''
     type: varchar(100)
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
   - name: season
-    context: Indicates whether the games were a 'Summer' or 'Winter' event.
+    context: ''
     type: varchar(100)
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
 - table_name: city
-  context: This table stores information about cities. The primary key is 'id', which
-    is an auto-incrementing integer. The 'city_name' column stores the name of each
-    city as a string.
+  context: ''
   fields:
   - name: id
-    context: The primary key of the table, an auto-incrementing integer. Based on
-      the sample, values range from 1 to 42.
+    context: Unique identifier for each city.
     type: int
     nullable: 'NO'
     key: PRI
     default: null
     extra: auto_increment
   - name: city_name
-    context: Stores the name of the city as a string. The sample contains city names
-      from various countries and regions.
+    context: Name of the city.
     type: varchar(200)
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
 - table_name: games_competitor
-  context: This table stores information about competitors in a games competition.
-    It links competitors to games and potentially other individuals. The primary key
-    is 'id'.  The sample data shows age ranges from 18 to 35, and competitors are
-    associated with various games.  'games_id' and 'person_id' are foreign keys.
+  context: ''
   fields:
   - name: id
-    context: Unique identifier for each competitor. It is an auto-incrementing integer
-      and the primary key.
+    context: ''
     type: int
     nullable: 'NO'
     key: PRI
     default: null
     extra: auto_increment
   - name: games_id
-    context: Foreign key referencing the 'games' table, indicating which game the
-      competitor is participating in.
+    context: ''
     type: int
     nullable: 'YES'
     key: MUL
     default: null
+    extra: ''
   - name: person_id
-    context: Foreign key referencing a 'person' table (not provided), indicating the
-      individual competitor.
+    context: ''
     type: int
     nullable: 'YES'
     key: MUL
     default: null
+    extra: ''
   - name: age
-    context: The competitor's age in years. Values range from 18 to 35 based on the
-      sample data.
+    context: ''
     type: int
     nullable: 'YES'
     key: ''
     default: null
+    extra: ''
 - table_name: competitor_event
-  context: This table records event participation by competitors, with each row representing
-    a competitor's result in a specific event. It includes an event identifier, a
-    competitor identifier, and a medal awarded to the competitor in that event. The
-    primary keys are event_id and competitor_id.
+  context: ''
   fields:
   - name: event_id
-    context: Unique identifier for an event.
+    context: ''
     type: int
     nullable: 'YES'
     key: MUL
     default: null
     extra: ''
   - name: competitor_id
-    context: Unique identifier for a competitor.
+    context: ''
     type: int
     nullable: 'YES'
     key: MUL
     default: null
     extra: ''
   - name: medal_id
-    context: Identifier for the medal awarded to the competitor in the event.
+    context: ''
     type: int
     nullable: 'YES'
     key: MUL
     default: null
     extra: ''
 - table_name: medal
-  context: This table tracks medal awards. It contains a primary key 'id' and a column
-    'medal_name' representing the type of medal awarded. The sample data shows a mix
-    of medal types, with 'NA' indicating a missing value.
+  context: ''
   fields:
   - name: id
-    context: This is the primary key, an auto-incrementing integer uniquely identifying
-      each medal record.
+    context: Unique identifier of a medal.
     type: int
     nullable: 'NO'
     key: PRI
     default: null
     extra: auto_increment
   - name: medal_name
-    context: This column stores the name of the medal awarded. The sample data includes
-      'Gold', 'Bronze', and 'NA'.
+    context: Name of the medal. Possible values are Gold, Silver, Bronze or NA if
+      not applicable.
     type: varchar(50)
     nullable: 'YES'
     key: ''
     default: null
+    extra: ''
 - table_name: event
-  context: This table tracks sporting events. It includes an event identifier, a sport
-    identifier, and the event name. The primary key is 'id'. The 'sport_id' likely
-    represents the sport to which the event belongs. Based on the sample data, the
-    event names are descriptive of various sporting events.
+  context: ''
   fields:
   - name: id
-    context: Unique identifier for each event. It is an integer and is the primary
-      key.
+    context: ''
     type: int
     nullable: 'NO'
     key: PRI
     default: null
     extra: auto_increment
   - name: sport_id
-    context: Identifier for the sport associated with the event. It is an integer.
+    context: ''
     type: int
     nullable: 'YES'
     key: MUL
     default: null
+    extra: ''
   - name: event_name
-    context: A descriptive name for the sporting event. It is a string with a maximum
-      length of 200 characters.
+    context: ''
     type: varchar(200)
     nullable: 'YES'
     key: ''
     default: null
+    extra: ''
 - table_name: games_city
-  context: This table appears to link games to cities. It contains two integer columns,
-    games_id and city_id, which likely represent foreign keys. The purpose is to track
-    which games are located in which cities.
+  context: ''
   fields:
   - name: games_id
-    context: An integer representing the ID of a game. Values range from 1 to 51 based
-      on the sample data.
+    context: Foreign key to games table.
     type: int
     nullable: 'YES'
     key: MUL
     default: null
     extra: ''
   - name: city_id
-    context: An integer representing the ID of a city.
+    context: Foreign key to cities table.
     type: int
     nullable: 'YES'
     key: MUL
     default: null
     extra: ''
 - table_name: noc_region
-  context: This table stores information about countries or regions, likely associated
-    with a ‘noc’ (Non-Operational Capability) designation. The ‘noc’ column likely
-    represents a code or identifier for these regions. The table includes a unique
-    ‘id’ column and a ‘region_name’ column for human-readable region identification.
+  context: ''
   fields:
   - name: id
-    context: Unique identifier for each region, likely a primary key.
+    context: ''
     type: int
     nullable: 'NO'
     key: PRI
     default: null
     extra: auto_increment
   - name: noc
-    context: A code or identifier for the Non-Operational Capability associated with
-      the region.
+    context: ''
     type: varchar(5)
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
   - name: region_name
-    context: The full name of the region, providing a human-readable representation.
+    context: ''
     type: varchar(200)
     nullable: 'YES'
     key: ''
     default: null
     extra: ''
 - table_name: person_region
-  context: 'This table links individuals to geographic regions. It contains two columns:
-    person_id, an integer representing a unique person, and region_id, an integer
-    representing a unique region. The columns are marked as foreign keys, indicating
-    relationships between the tables.'
+  context: ''
   fields:
   - name: person_id
-    context: An integer representing a unique person. Based on the sample, values
-      range from 105652 to 124447.
+    context: Foreign key to person table.
     type: int
     nullable: 'YES'
     key: MUL
     default: null
     extra: ''
   - name: region_id
-    context: An integer representing a unique region. Based on the sample, values
-      range from 21 to 217.
+    context: Foreign key to region table.
     type: int
     nullable: 'YES'
     key: MUL
     default: null
     extra: ''
 - table_name: sport
-  context: This table stores information about various sports. It contains a primary
-    key 'id' which is an auto-incrementing integer, and a column 'sport_name' which
-    stores the name of the sport as a string. The sample data includes a diverse range
-    of sports.
+  context: ''
   fields:
   - name: id
-    context: This is the primary key of the table, an auto-incrementing integer. It
-      uniquely identifies each sport entry.
+    context: Unique identifier of each sport.
     type: int
     nullable: 'NO'
     key: PRI
     default: null
     extra: auto_increment
   - name: sport_name
-    context: This column stores the name of the sport as a string. The sample data
-      includes a variety of sport names.
+    context: Name of the sport.
     type: varchar(200)
     nullable: 'YES'
     key: ''
