@@ -8,6 +8,12 @@ import os
 from datetime import datetime
 from typing import Dict, List, Optional
 import ollama
+import sys
+sys.path.append('../')
+import os
+
+from schemaanalyzer.schema_analyzer import get_analyzed_schema
+
 
 app = FastAPI(title="Daver API", description="Natural Language Database Query System")
 
@@ -59,7 +65,7 @@ def load_config():
 
 def get_analysis_path():
     """Get path to the schema analysis file"""
-    return os.path.join(ANALYSIS_DIR, "schema_analysis.json")
+    return os.path.join(ANALYSIS_DIR, "schema_analysis.yaml")
 
 def call_ollama(model: str, prompt: str, system_prompt: str = None) -> str:
     """Helper function to call Ollama models"""
@@ -76,24 +82,12 @@ def call_ollama(model: str, prompt: str, system_prompt: str = None) -> str:
 
 def analyze_schema_with_ollama(config: dict) -> dict:
     """Analyze database schema using Ollama"""
-    # This is a placeholder - implement actual schema analysis
-    system_prompt = """You are a database schema analyzer. Extract table names, 
-    column names, data types, relationships, and semantic meanings from the database schema."""
     
-    prompt = f"""Analyze the database with these connection details:
-    Database type: {config.get('database', {}).get('type', 'unknown')}
-    Host: {config.get('database', {}).get('host', 'localhost')}
-    
-    Return a JSON structure with tables, columns, relationships, and semantic descriptions."""
-    
-    # Call CodeGemma for schema analysis
-    analysis_result = call_ollama("codegemma:7b", prompt, system_prompt)
-    
-    # Parse and structure the result
-    try:
-        return json.loads(analysis_result)
-    except json.JSONDecodeError:
-        return {"raw_analysis": analysis_result, "parsed": False}
+    db_config = config['database']
+    print(db_config)
+    analyzed_schema = get_analyzed_schema(db_config=db_config, model='gemma3:4b')
+    print('Schema analyzed successfully.')
+    return analyzed_schema
 
 def process_chat_query(message: str, chat_history: List[ChatMessage], schema_analysis: dict) -> tuple:
     """Process user query and generate SQL"""
@@ -149,20 +143,19 @@ async def upload_config(config_file: UploadFile = File(..., description="YAML co
         
         with open(config_path, 'wb') as f:
             f.write(content)
+        print("Configuration written successfully")
             
-        return {
-            "message": "Configuration uploaded successfully", 
-            "filename": config_file.filename,
-            "size": len(content)
-        }
     except yaml.YAMLError as e:
         raise HTTPException(status_code=400, detail=f"Invalid YAML format: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+    
 
-@app.post("/analyze-schema", response_model=AnalysisStatus)
-async def analyze_schema():
+    return analyze_schema()
+
+def analyze_schema():
     """Analyze database schema and store results"""
+    print("Analyzing schema")
     try:
         config = load_config()
         
@@ -172,11 +165,7 @@ async def analyze_schema():
         # Store analysis results
         analysis_path = get_analysis_path()
         with open(analysis_path, 'w') as f:
-            json.dump({
-                "timestamp": datetime.now().isoformat(),
-                "config_used": config,
-                "analysis": analysis_result
-            }, f, indent=2)
+            f.write(analysis_result)
         
         return AnalysisStatus(
             status="completed",
@@ -184,6 +173,7 @@ async def analyze_schema():
         )
         
     except Exception as e:
+        print(f"Analysis failed: {str(e)}")
         return AnalysisStatus(
             status="error", 
             message=f"Analysis failed: {str(e)}"
@@ -199,9 +189,8 @@ async def chat(request: ChatRequest):
             raise HTTPException(status_code=404, detail="No schema analysis found. Please analyze schema first.")
         
         with open(analysis_path, 'r') as f:
-            analysis_data = json.load(f)
-        
-        schema_analysis = analysis_data.get("analysis", {})
+            yaml_file = yaml.load(f, Loader=yaml.FullLoader)
+            analyzed_schema = yaml.dump(yaml_file)
         
         # Get or create chat session
         chat_id = request.chat_id or str(uuid.uuid4())

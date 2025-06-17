@@ -1,7 +1,6 @@
 database:
-  type: "postgresql"  # or mysql, mongodb
   host: "localhost"
-  port: 5432
-  username: "user"
-  password: "pass"
-  database: "dbname"
+  port: 3306
+  username: "daver"
+  password: "pizzatime"
+  database: "daver_db"
