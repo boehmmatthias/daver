@@ -1,0 +1,4 @@
+Response <RESPONSE_NUMBER>:
+User prompt: <USER_PROMPT>
+Processed query: <PROCESSED_QUERY>
+Generated SQL: <GENERATED SQL>

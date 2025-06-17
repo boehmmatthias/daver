@@ -1,14 +1,15 @@
 Analyse the schema for tables and properties. Select, Join and Filter based on the request in Input1.
 Use only the tables and Information contained in Input 2
 Generate a complete SQL query that fulfills these requirements.
+Do not add any unnecessary constraints to the query that are asked for in the natural language query.
 Only generate valid SQL.
 Do not make up tables.
 Do not write text or explanations.
 
-Input 1: Processed Natural Language Query (JSON)
+Input 1: Natural Language Query
 <NLQUERY>
 
-Input 2: Database Schema (JSON)
+Input 2: Database Schema
 <SCHEMA>
 
 
