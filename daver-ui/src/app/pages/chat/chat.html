@@ -1,0 +1,59 @@
+<div class="landing-container">
+  <div class="landing-content">
+    <!-- Chat Card -->
+    <mat-card class="chat-card">
+      <mat-card-content>
+        <div class="chat-header">
+          <h2 class="chat-title">Chat with Daver</h2>
+          <img src="assets/images/daver_dictionary.png" alt="Daver Dictionary" class="header-logo">
+        </div>
+        <p class="chat-description">
+          Ask questions about your data in natural language and get instant insights.
+        </p>
+        
+        <!-- Chat Messages Area -->
+        <div class="chat-messages" #chatMessages>
+          <div class="message" 
+               [class.user-message]="message.type === 'user'"
+               [class.bot-message]="message.type === 'bot'"
+               *ngFor="let message of allMessages()">
+            <div class="message-content">
+              <div class="message-text">{{ message.text }}</div>
+              <div class="message-time">{{ message.timestamp | date:'shortTime' }}</div>
+            </div>
+          </div>
+          
+          <!-- Loading indicator for bot response -->
+          <div class="message bot-message" *ngIf="isLoading()">
+            <div class="message-content">
+              <div class="message-text">
+                <mat-spinner diameter="20"></mat-spinner>
+                <span>Daver is thinking...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Chat Input Area -->
+        <div class="chat-input-area">
+          <mat-form-field class="chat-input-field" appearance="outline">
+            <mat-label>Ask a question about your data...</mat-label>
+            <textarea 
+              matInput 
+              [ngModel]="userInput()"
+              (ngModelChange)="userInput.set($event)"
+              (keydown)="onKeyDown($event)"
+              placeholder="e.g., Show me all users who signed up last month&#10;Press Enter to send, Shift+Enter for new line"
+              [disabled]="isLoading()"
+              rows="1"
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="1"
+              cdkAutosizeMaxRows="4">
+            </textarea>
+            <mat-icon matSuffix (click)="sendMessage()" class="send-icon">send</mat-icon>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
