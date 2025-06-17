@@ -91,6 +91,23 @@
             <span>{{ isUploading() ? 'Uploading...' : 'Upload Configuration' }}</span>
           </div>
         </button>
+        
+        <!-- Error Message -->
+        <div class="error-message" *ngIf="errorMessage()">
+          <div class="error-content">
+            <mat-icon class="error-icon">error_outline</mat-icon>
+            <div class="error-text">
+              <h4>Upload Failed</h4>
+              <p>{{ errorMessage() }}</p>
+            </div>
+            <button 
+              mat-icon-button 
+              class="error-close"
+              (click)="errorMessage.set(null)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
       </mat-card-content>
     </mat-card>
 

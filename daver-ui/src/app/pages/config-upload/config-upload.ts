@@ -1,10 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
+import { DaverApi } from '../../services/daver-api';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'daver-config-upload',
@@ -23,8 +25,11 @@ export class ConfigUpload {
   isDragOver = signal(false);
   isUploading = signal(false);
   isAnalyzing = signal(false);
+  errorMessage = signal<string | null>(null);
+  private daverApi = inject(DaverApi)
+  private router = inject(Router)
 
-  constructor(private router: Router) {}
+  constructor() {}
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -78,19 +83,46 @@ export class ConfigUpload {
     const file = this.selectedFile();
     if (!file) return;
     
+    // Clear any previous errors
+    this.errorMessage.set(null);
     this.isUploading.set(true);
     
-    // Simulate upload process with modern timing
-    setTimeout(() => {
-      this.isUploading.set(false);
-      this.isAnalyzing.set(true);
-      
-      // Simulate database analysis
-      setTimeout(() => {
+    this.daverApi.uploadConfig(file).subscribe({
+      next: (event: HttpEvent<any>) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          const percentDone = Math.round(100 * event.loaded / (event.total || 1));
+          console.log(`File is ${percentDone}% uploaded.`);
+          
+          // When upload is complete, switch to analyzing mode
+          if (percentDone === 100) {
+            this.isUploading.set(false);
+            this.isAnalyzing.set(true);
+          }
+        } else if (event.type === HttpEventType.Response) {
+          // Analysis is complete, navigate to chat
+          this.isAnalyzing.set(false);
+          this.router.navigate(['/chat']);
+        }
+      },
+      error: (error: any) => {
+        console.error('File upload failed:', error);
+        this.isUploading.set(false);
         this.isAnalyzing.set(false);
-        // Navigate to chat component
-        this.router.navigate(['/chat']);
-      }, 8000); // 8 seconds for analysis simulation
-    }, 3000); // 3 seconds for upload simulation
+        
+        // Set user-friendly error message
+        let message = 'Upload failed. Please try again.';
+        if (error.status === 413) {
+          message = 'File too large. Please select a smaller configuration file.';
+        } else if (error.status === 400) {
+          message = 'Invalid configuration file. Please check your YAML format.';
+        } else if (error.status === 0) {
+          message = 'Network error. Please check your connection and try again.';
+        } else if (error.status >= 500) {
+          message = 'Server error. Please try again later.';
+        }
+        
+        this.errorMessage.set(message);
+      }
+    });
   }
 }
