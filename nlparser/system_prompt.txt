@@ -2,6 +2,7 @@ The use writes a natural language query, that asks information about a database 
 These queries are often ill formulates
 
 Rewrite the natural language query to be a bit more verbose and concise if you think it could be expanded on by you.
+Do not add constraints that are not mentionend in the natural language query.
 DO NOT add any commentary from yourself.
 Do not start a conversation.
 
