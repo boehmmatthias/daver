@@ -9,6 +9,11 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import ollama
 import sys
+
+from nlparser.natural_language_parser import get_processed_query
+from querygenerator.query_generator import get_database_query
+from queryjudge.query_judge import judge_sql_responses
+
 sys.path.append('../')
 import os
 
@@ -38,8 +43,9 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     chat_id: str
-    response: str
-    sql_query: Optional[str] = None
+    fetched_data: dict
+    sql_query: str
+    additional_information: str
     
 class AnalysisStatus(BaseModel):
     status: str
@@ -85,43 +91,28 @@ def analyze_schema_with_ollama(config: dict) -> dict:
     
     db_config = config['database']
     print(db_config)
-    analyzed_schema = get_analyzed_schema(db_config=db_config, model='gemma3:4b')
+    analyzed_schema = get_analyzed_schema(db_config=db_config, model='phi4:14b')
     print('Schema analyzed successfully.')
     return analyzed_schema
 
-def process_chat_query(message: str, chat_history: List[ChatMessage], schema_analysis: dict) -> tuple:
+def process_chat_query(message: str, chat_history: List[ChatMessage], schema_analysis: str) -> str:
     """Process user query and generate SQL"""
     
-    # Step 1: Preprocess natural language query
-    preprocess_prompt = f"""Convert this natural language query into a clear, technical instruction:
-    User query: {message}
+    message = message.strip()
+    processed_query = get_processed_query(message, model='phi4:14b', host='http://localhost:11434')
+    print(f'Processed query: {processed_query}')
     
-    Available database schema: {json.dumps(schema_analysis, indent=2)}
-    
-    Return a structured query intent."""
-    
-    processed_query = call_ollama("llama3.1:8b", preprocess_prompt)
-    
-    # Step 2: Generate SQL
-    sql_prompt = f"""Generate SQL query for this request:
-    Processed query: {processed_query}
-    
-    Database schema: {json.dumps(schema_analysis, indent=2)}
-    
-    Return only valid SQL query."""
-    
-    sql_query = call_ollama("sqlcoder:15b", sql_prompt)
-    
-    # Step 3: Generate natural language response
-    response_prompt = f"""Create a user-friendly response explaining what this SQL query does:
-    SQL: {sql_query}
-    Original request: {message}
-    
-    Be conversational and explain the results."""
-    
-    response = call_ollama("llama3.1:8b", response_prompt)
-    
-    return response, sql_query.strip()
+    n_queries = 4
+
+    sql_responses = [get_database_query(processed_query, schema_analysis, model='deepseek-coder:6.7b').replace('\n',' ') for _ in range(n_queries)]
+
+    response = judge_sql_responses(sql_responses, message, processed_query, schema_analysis, model='deepseek-coder:6.7b')
+    resp_json = json.loads(response)
+    if 'thinking' in resp_json:
+        print(f'Thinking: {resp_json["thinking"]}')
+    response = resp_json['choice']
+    idx = int(response.lower().removeprefix('response '))
+    return sql_responses[idx]
 
 # API Endpoints
 
@@ -149,7 +140,6 @@ async def upload_config(config_file: UploadFile = File(..., description="YAML co
         raise HTTPException(status_code=400, detail=f"Invalid YAML format: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
-    
 
     return analyze_schema()
 
@@ -178,6 +168,27 @@ def analyze_schema():
             status="error", 
             message=f"Analysis failed: {str(e)}"
         )
+
+def fetch_data(sql_query: str, db_config: dict) -> dict:
+    """Fetch data from the database using the generated SQL query"""
+    import mysql.connector
+    connection = None
+    cursor = None
+    data = {}
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute(sql_query)
+        results = cursor.fetchall()
+        data = {'result': results}
+    except mysql.connector.Error as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+    return data
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -208,19 +219,23 @@ async def chat(request: ChatRequest):
         chat_history.append(user_message)
         
         # Process query
-        response_text, sql_query = process_chat_query(
+        sql_query = process_chat_query(
             request.message, 
             chat_history, 
-            schema_analysis
+            analyzed_schema
         )
-        
+        print(f"Generated SQL Query: {sql_query}")
+        # Fetch data from the database
+        db_config = load_config()['database']
+        fetched_data = fetch_data(sql_query, db_config)
+
         # Add assistant response to history
-        assistant_message = ChatMessage(
-            role="assistant",
-            content=response_text,
+        generated_query_message = ChatMessage(
+            role="query",
+            content=sql_query,
             timestamp=datetime.now()
         )
-        chat_history.append(assistant_message)
+        chat_history.append(generated_query_message)
         
         # Limit chat history size
         if len(chat_history) > 20:
@@ -229,8 +244,9 @@ async def chat(request: ChatRequest):
         
         return ChatResponse(
             chat_id=chat_id,
-            response=response_text,
-            sql_query=sql_query if sql_query and sql_query != response_text else None
+            sql_query=sql_query,
+            additional_information='',
+            fetched_data=fetched_data,
         )
         
     except Exception as e:
