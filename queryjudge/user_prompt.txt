@@ -1,0 +1,5 @@
+Looking at this request for an LLM that should generate SQL, which response is more suitable ?
+This is the schema information: <SCHEMA>
+
+<RESPONSES>
+

@@ -24,17 +24,26 @@ def build_messages(system_prompt: str,  user_prompt: str):
         }
     ]
 
-def get_database_query(processed_nl_query: str, database_schema: str, model: str = 'gemma3:4b', host: str = 'http://localhost:11434') -> str:
+def judge_sql_responses(sql_responses: list[str], user_nl_query: str, processed_nl_query: str, database_schema: str, model: str = 'gemma3:4b', host: str = 'http://localhost:11434') -> str:
     """Process the natural language query to a structured database query."""
     system_prompt = read_txt_file('system_prompt.txt')
     user_prompt = read_txt_file('user_prompt.txt')
-    # replace user prompt placeholder with the actual processed query
-    user_prompt = user_prompt.replace('<NLQUERY>', processed_nl_query)
+    response_template = read_txt_file('response_template.txt')
+    
     user_prompt = user_prompt.replace('<SCHEMA>', database_schema)
+    templates =  [
+        response_template
+        .replace('<RESPONSE_NUMBER>', str(i))
+        .replace('<GENERATED_SQL>', sql)
+        .replace('<USER_PROMPT>', user_nl_query)
+        .replace('<PROCESSED_QUERY>', processed_nl_query)
+        for i,sql in enumerate(sql_responses)
+    ]
+    
+    templates_str = '\n\n'.join(templates)
+    # replace user prompt placeholder with the actual processed query
+    user_prompt = user_prompt.replace('<RESPONSES>', templates_str)
     messages = build_messages(system_prompt, user_prompt)
-    
-    
-    # print("Messages: ", messages)
     
     # check if model is a thinking model
     thinking_model = model.startswith('deepseek-r1')
@@ -50,8 +59,15 @@ def get_database_query(processed_nl_query: str, database_schema: str, model: str
         model=model,
         messages=messages,
         stream=thinking_model,
-        options= {
-            'temperature': 0.7,
+        format={
+            "type": "object",
+            "properties": {
+                "choice": {"enum": [f"Response {i}" for i in range(len(sql_responses))]}
+            },
+            "required": ["choice"]
+        },
+        options={
+            # 'temperature': 0.1
             'num_ctx': 16384
         }
     )

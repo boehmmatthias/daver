@@ -1,0 +1,6 @@
+You should look at a set of LLM generated SQL queries that should correspond to a natural language query.
+Choose the SQL query that answers the natural language query the best based on correctness.
+
+Only respond with the Letter of the of the correct SQL query response, such as "Response 0" or "Response 2", nothing else.
+Do not add any explanation or commentary. Do not add any codeblocks.
+Just write the response name.

@@ -1,2 +1,9 @@
-Rewrite this natural language query to be a bit more verbose if you think it could be written out a bit more.
+The use writes a natural language query, that asks information about a database and its content.
+These queries are often ill formulates
+
+Rewrite the natural language query to be a bit more verbose and concise if you think it could be expanded on by you.
+Do not add constraints that are not mentionend in the natural language query.
 DO NOT add any commentary from yourself.
+Do not start a conversation.
+
+Queries or Questions are always about data found in a database, not general questions that you should answer yourself.

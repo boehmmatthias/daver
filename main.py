@@ -4,13 +4,16 @@ import os
 import pickle
 import nlparser.natural_language_parser as nlparser
 from querygenerator.query_generator import get_database_query
+from queryjudge.query_judge import judge_sql_responses
 from schemaanalyzer.schema_analyzer import get_analyzed_schema
 
 if __name__ == "__main__":
-    user_prompt = 'Find all the persons with a gold medal'
+    user_prompt = 'Show me all the Olympic sports'
+    print('User prompt: 🗣️ ', user_prompt)
+    
+    
     processed_query = nlparser.get_processed_query(user_prompt)
-
-    print('Processed query: ', processed_query)
+    print('Processed query: 🔍 ', processed_query)
 
     db_config = {
         'host': 'localhost',
@@ -19,21 +22,19 @@ if __name__ == "__main__":
         'password': 'pizzatime',
         'database': 'daver_db'
     }
-
-    #table_list = ['person', 'games', 'games_competitor', 'competitor_event', 'medal', 'city', 'competitor_event',
-    #              'event', 'games_city', 'noc_region', 'person_region', 'sport']
+    
     table_list = [
         'person',
         'games',
-        #'city',
+        'city',
         'games_competitor',
         'competitor_event',
         'medal',
-        #'event',
+        'event',
         'games_city',
-        #'noc_region',
-        #'person_region',
-        #'sport'
+        'noc_region',
+        'person_region',
+        'sport'
     ]
     table_list_small = ['person']
     reanalyze_schema = False
@@ -46,8 +47,23 @@ if __name__ == "__main__":
             f.write(analyzed_schema)
     else:
         # If not reanalyzing, we can load the schema from a file
-        analyzed_schema = yaml.load('analyzed_schema.yaml', Loader=yaml.FullLoader)
+        yaml_schema = yaml.load(open('analyzed_schema.yaml'), Loader=yaml.FullLoader)
+        analyzed_schema = yaml.dump(yaml_schema)
         print('Schema loaded from file.')
 
-    generated_query = get_database_query(processed_query, analyzed_schema, model='deepseek-coder:6.7b')
-    print(generated_query)
+    n = 10
+    sql_responses = [get_database_query(processed_query, analyzed_schema, model='deepseek-coder:6.7b') for _ in range(n)]
+    
+    for i, sql in enumerate(sql_responses):
+        print(f'Response {i}: \n{sql}')
+    
+    resp = judge_sql_responses(sql_responses, user_prompt, processed_query, analyzed_schema, model='gemma3:4b')
+    resp = json.loads(resp)['choice']
+    print(f'Judged Response: {resp}')
+    
+    # int from string
+    idx = int(resp.lower().removeprefix('response '))
+    
+    print(f'Response {idx}: \n{sql_responses[idx]}')
+    
+    # print(generated_query)
