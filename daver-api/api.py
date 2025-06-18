@@ -102,7 +102,7 @@ def process_chat_query(message: str, chat_history: List[ChatMessage], schema_ana
     processed_query = get_processed_query(message, model='phi4:14b', host='http://localhost:11434')
     print(f'Processed query: {processed_query}')
     
-    n_queries = 4
+    n_queries = 10
 
     sql_responses = [get_database_query(processed_query, schema_analysis, model='deepseek-coder:6.7b').replace('\n',' ') for _ in range(n_queries)]
 

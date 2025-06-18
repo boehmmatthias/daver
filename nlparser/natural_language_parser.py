@@ -56,7 +56,7 @@ def get_processed_query(natural_query: str, model: str = 'gemma3:4b', host: str 
         # format=response_schema,
         stream=False,
         options={
-            'temperature': 0.2
+            'temperature': 0.05
         }
     )
     return response.message.content
