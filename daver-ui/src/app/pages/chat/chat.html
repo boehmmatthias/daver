@@ -55,6 +55,18 @@
               [data]="message.fetchedData"
               class="message-data-table">
             </daver-data-table>
+
+            <!-- Retry Button for bot messages -->
+            <div class="message-actions" *ngIf="message.type === 'bot' && lastUserMessage()">
+              <button
+                mat-stroked-button
+                class="retry-button"
+                (click)="retryLastMessage()"
+                [disabled]="isLoading()">
+                <mat-icon>refresh</mat-icon>
+                Try Again
+              </button>
+            </div>
           </div>
 
           <!-- Loading indicator for bot response -->

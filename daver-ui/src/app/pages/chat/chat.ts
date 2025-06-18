@@ -39,6 +39,7 @@ export class Chat implements AfterViewChecked {
   userInput = signal('');
   errorMessage = signal<string | null>(null);
   debugMode = signal(false);
+  lastUserMessage = signal<string>(''); // Store the last user message for retry
 
   private daverApi = inject(DaverApi);
 
@@ -72,18 +73,46 @@ export class Chat implements AfterViewChecked {
     // Clear any previous errors
     this.errorMessage.set(null);
 
+    // Store the user message for potential retry
+    const userMessageText = this.userInput().trim();
+    this.lastUserMessage.set(userMessageText);
+
     // Add user message
     const userMessage: ChatMessage = {
-      text: this.userInput().trim(),
+      text: userMessageText,
       timestamp: new Date(),
       type: 'user'
     };
     this.messages.update(messages => [...messages, userMessage]);
 
     // Clear input
-    const inputText = this.userInput();
     this.userInput.set('');
 
+    // Send the message
+    this.sendMessageToServer(userMessageText);
+  }
+
+  retryLastMessage(): void {
+    if (!this.lastUserMessage() || this.isLoading()) {
+      return;
+    }
+
+    // Clear any previous errors
+    this.errorMessage.set(null);
+
+    // Add user message again
+    const userMessage: ChatMessage = {
+      text: this.lastUserMessage(),
+      timestamp: new Date(),
+      type: 'user'
+    };
+    this.messages.update(messages => [...messages, userMessage]);
+
+    // Send the message again
+    this.sendMessageToServer(this.lastUserMessage());
+  }
+
+  private sendMessageToServer(messageText: string): void {
     // Show loading state
     this.isLoading.set(true);
 
@@ -91,7 +120,7 @@ export class Chat implements AfterViewChecked {
     const requestStartTime = Date.now();
 
     // Send message to server
-    this.daverApi.sendChatMessage(inputText).subscribe({
+    this.daverApi.sendChatMessage(messageText).subscribe({
       next: (response) => {
         // Calculate request time
         const requestTime = Date.now() - requestStartTime;
