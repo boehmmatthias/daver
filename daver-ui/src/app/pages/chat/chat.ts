@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TextFieldModule } from '@angular/cdk/text-field';
@@ -22,6 +23,7 @@ import { DataTable } from '../../components/data-table/data-table';
     MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSlideToggleModule,
     FormsModule,
     TextFieldModule,
     DataTable
@@ -36,6 +38,7 @@ export class Chat implements AfterViewChecked {
   isLoading = signal(false);
   userInput = signal('');
   errorMessage = signal<string | null>(null);
+  debugMode = signal(false);
 
   private daverApi = inject(DaverApi);
 
@@ -84,9 +87,15 @@ export class Chat implements AfterViewChecked {
     // Show loading state
     this.isLoading.set(true);
 
+    // Track request start time for debug mode
+    const requestStartTime = Date.now();
+
     // Send message to server
     this.daverApi.sendChatMessage(inputText).subscribe({
       next: (response) => {
+        // Calculate request time
+        const requestTime = Date.now() - requestStartTime;
+        
         // Extract the result array from fetched_data
         const resultData = response.fetched_data?.result || [];
         const hasData = Array.isArray(resultData) && resultData.length > 0;
@@ -102,11 +111,18 @@ export class Chat implements AfterViewChecked {
           botText = hasAdditionalInfo ? response.additional_information : 'No data found for your query.';
         }
         
+        // Prepare debug info if debug mode is enabled
+        const debugInfo = this.debugMode() ? {
+          sqlQuery: response.sql_query,
+          requestTime: requestTime
+        } : undefined;
+        
         const botResponse: ChatMessage = {
           text: botText,
           timestamp: new Date(),
           type: 'bot',
-          fetchedData: hasData ? resultData : undefined
+          fetchedData: hasData ? resultData : undefined,
+          debugInfo: debugInfo
         };
         this.messages.update(messages => [...messages, botResponse]);
         this.isLoading.set(false);
@@ -115,11 +131,25 @@ export class Chat implements AfterViewChecked {
         console.error('Chat message failed:', error);
         this.isLoading.set(false);
         
+        // Calculate request time for error case
+        const requestTime = Date.now() - requestStartTime;
+        
+        // Extract detailed error message from response
+        let errorText = this.getErrorMessage(error);
+        
+        // Try to get detailed error from response body
+        if (error.error && error.error.detail) {
+          errorText = error.error.detail;
+        } else if (error.detail) {
+          errorText = error.detail;
+        }
+        
         // Add error message from bot
         const errorResponse: ChatMessage = {
-          text: this.getErrorMessage(error),
+          text: errorText,
           timestamp: new Date(),
-          type: 'bot'
+          type: 'bot',
+          debugInfo: this.debugMode() ? { requestTime: requestTime } : undefined
         };
         this.messages.update(messages => [...messages, errorResponse]);
       }
@@ -127,12 +157,26 @@ export class Chat implements AfterViewChecked {
   }
 
   private getErrorMessage(error: any): string {
+    // If we have a detailed error message from the server, use it
+    if (error.error && error.error.detail) {
+      return error.error.detail;
+    }
+    
+    if (error.detail) {
+      return error.detail;
+    }
+    
+    // Fallback to generic error messages based on status
     if (error.status === 0) {
       return 'Network error. Please check your connection and try again.';
     } else if (error.status === 400) {
       return 'Invalid message format. Please try rephrasing your question.';
+    } else if (error.status === 404) {
+      return 'Service not found. Please check if the server is running.';
     } else if (error.status >= 500) {
       return 'Server error. Please try again later.';
+    } else if (error.message) {
+      return error.message;
     } else {
       return 'Sorry, I encountered an error. Please try again.';
     }

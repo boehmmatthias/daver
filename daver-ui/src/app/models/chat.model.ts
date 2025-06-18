@@ -3,6 +3,10 @@ export interface ChatMessage {
   timestamp: Date;
   type: 'user' | 'bot';
   fetchedData?: any[]; // Optional field for table data
+  debugInfo?: {
+    sqlQuery?: string;
+    requestTime?: number; // in milliseconds
+  };
 }
 
 export interface ChatRequest {

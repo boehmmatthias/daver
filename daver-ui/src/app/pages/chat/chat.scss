@@ -54,11 +54,39 @@
     }
   }
 
-  .chat-description {
-    color: #5a6c7d;
-    font-size: 1.2rem;
-    margin: 0 0 2.5rem 0;
-    line-height: 1.6;
+  .chat-description-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+
+    .chat-description {
+      color: #5a6c7d;
+      font-size: 1.2rem;
+      margin: 0;
+      line-height: 1.6;
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .debug-toggle {
+      flex-shrink: 0;
+      
+      ::ng-deep .mat-mdc-slide-toggle {
+        .mdc-switch {
+          --mdc-switch-selected-track-color: #667eea;
+          --mdc-switch-selected-handle-color: #667eea;
+        }
+        
+        .mdc-form-field > label {
+          color: #2c3e50;
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+      }
+    }
   }
 }
 
@@ -198,6 +226,59 @@
 
           .pagination-container {
             padding: 0.75rem 1rem;
+          }
+        }
+      }
+
+      .debug-info {
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        max-width: 100%;
+        backdrop-filter: blur(5px);
+
+        .debug-section {
+          margin-bottom: 0.75rem;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .debug-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #667eea;
+            margin-bottom: 0.25rem;
+
+            .debug-icon {
+              font-size: 1rem;
+              width: 1rem;
+              height: 1rem;
+            }
+          }
+
+          .debug-content {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.8rem;
+            color: #2c3e50;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 0.5rem;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+            word-break: break-word;
+            white-space: pre-wrap;
+            line-height: 1.4;
+
+            &.sql-query {
+              background: rgba(44, 62, 80, 0.05);
+              color: #34495e;
+              font-weight: 500;
+            }
           }
         }
       }
@@ -402,8 +483,12 @@
       }
     }
 
-    .chat-description {
-      font-size: 1.1rem;
+    .chat-description-container {
+      gap: 1.5rem;
+
+      .chat-description {
+        font-size: 1.1rem;
+      }
     }
   }
 
@@ -443,9 +528,14 @@
       }
     }
 
-    .chat-description {
-      font-size: 1rem;
-      margin: 0 0 1.5rem 0;
+    .chat-description-container {
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+
+      .chat-description {
+        font-size: 1rem;
+        min-width: 250px;
+      }
     }
   }
 
@@ -515,9 +605,14 @@
       }
     }
 
-    .chat-description {
-      font-size: 0.9rem;
-      margin: 0 0 1rem 0;
+    .chat-description-container {
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+
+      .chat-description {
+        font-size: 0.9rem;
+        min-width: 200px;
+      }
     }
   }
 
@@ -593,8 +688,14 @@
       }
     }
 
-    .chat-description {
-      font-size: 0.85rem;
+    .chat-description-container {
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+
+      .chat-description {
+        font-size: 0.85rem;
+        min-width: 180px;
+      }
     }
   }
 
@@ -639,9 +740,13 @@
       }
     }
 
-    .chat-description {
-      font-size: 0.9rem;
-      margin: 0 0 1rem 0;
+    .chat-description-container {
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+
+      .chat-description {
+        font-size: 0.9rem;
+      }
     }
   }
 
@@ -674,9 +779,13 @@
       }
     }
 
-    .chat-description {
-      font-size: 0.8rem;
-      margin: 0 0 0.5rem 0;
+    .chat-description-container {
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+
+      .chat-description {
+        font-size: 0.8rem;
+      }
     }
   }
 

@@ -7,9 +7,18 @@
           <h2 class="chat-title">Chat with Daver</h2>
           <img src="assets/images/daver_dictionary.png" alt="Daver Dictionary" class="header-logo">
         </div>
-        <p class="chat-description">
-          Ask questions about your data in natural language and get instant insights.
-        </p>
+        <div class="chat-description-container">
+          <p class="chat-description">
+            Ask questions about your data in natural language and get instant insights.
+          </p>
+          <mat-slide-toggle 
+            [ngModel]="debugMode()" 
+            (ngModelChange)="debugMode.set($event)"
+            color="primary"
+            class="debug-toggle">
+            Debug Mode
+          </mat-slide-toggle>
+        </div>
 
         <!-- Chat Messages Area -->
         <div class="chat-messages" #chatMessages>
@@ -20,6 +29,24 @@
             <div class="message-content">
               <div class="message-text">{{ message.text }}</div>
               <div class="message-time">{{ message.timestamp | date:'shortTime' }}</div>
+            </div>
+            
+            <!-- Debug Information for bot messages -->
+            <div class="debug-info" *ngIf="message.type === 'bot' && message.debugInfo && debugMode()">
+              <div class="debug-section" *ngIf="message.debugInfo.sqlQuery">
+                <div class="debug-label">
+                  <mat-icon class="debug-icon">code</mat-icon>
+                  SQL Query:
+                </div>
+                <div class="debug-content sql-query">{{ message.debugInfo.sqlQuery }}</div>
+              </div>
+              <div class="debug-section" *ngIf="message.debugInfo.requestTime !== undefined">
+                <div class="debug-label">
+                  <mat-icon class="debug-icon">schedule</mat-icon>
+                  Request Time:
+                </div>
+                <div class="debug-content">{{ message.debugInfo.requestTime }}ms</div>
+              </div>
             </div>
             
             <!-- Data Table for bot messages with fetched data -->
