@@ -1,5 +1,7 @@
 fastapi
 uvicorn
-ollama
 pyyaml
 python-multipart
+ollama
+mysql-connector-python
+pandas

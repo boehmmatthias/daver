@@ -19,14 +19,14 @@ import os
 
 from schemaanalyzer.schema_analyzer import get_analyzed_schema
 
-
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://ollama:11434")
 app = FastAPI(title="Daver API", description="Natural Language Database Query System")
 
 # CORS middleware for Angular frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],  # Angular default port
-    allow_credentials=True,
+    allow_origins=["*"],  # Angular default port
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -91,7 +91,7 @@ def analyze_schema_with_ollama(config: dict) -> dict:
     
     db_config = config['database']
     print(db_config)
-    analyzed_schema = get_analyzed_schema(db_config=db_config, model='phi4:14b')
+    analyzed_schema = get_analyzed_schema(db_config=db_config, model='phi4:14b', ollama_host=OLLAMA_HOST)
     print('Schema analyzed successfully.')
     return analyzed_schema
 
@@ -99,12 +99,12 @@ def process_chat_query(message: str, chat_history: List[ChatMessage], schema_ana
     """Process user query and generate SQL"""
     
     message = message.strip()
-    processed_query = get_processed_query(message, model='phi4:14b', host='http://localhost:11434')
+    processed_query = get_processed_query(message, model='phi4:14b', host=OLLAMA_HOST)
     print(f'Processed query: {processed_query}')
     
     n_queries = 10
 
-    sql_responses = [get_database_query(processed_query, schema_analysis, model='deepseek-coder:6.7b').replace('\n',' ') for _ in range(n_queries)]
+    sql_responses = [get_database_query(processed_query, schema_analysis, model='deepseek-coder:6.7b', host=OLLAMA_HOST).replace('\n',' ') for _ in range(n_queries)]
     print(f'SQL responses:')
     for response in sql_responses:
         print(f' - {response}')
@@ -113,7 +113,7 @@ def process_chat_query(message: str, chat_history: List[ChatMessage], schema_ana
     for query in valid_queries:
         print(f' - {query}')
     if len(valid_queries) > 1:
-        response = judge_sql_responses(valid_queries, message, processed_query, schema_analysis, model='deepseek-coder:6.7b')
+        response = judge_sql_responses(valid_queries, message, processed_query, schema_analysis, model='deepseek-coder:6.7b', host=OLLAMA_HOST)
         resp_json = json.loads(response)
         if 'thinking' in resp_json:
             print(f'Thinking: {resp_json["thinking"]}')
@@ -312,3 +312,4 @@ async def get_status():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    print('Ollama host:', OLLAMA_HOST)

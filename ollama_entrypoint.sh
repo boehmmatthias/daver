@@ -8,8 +8,10 @@ pid="$!"
 sleep 5
 
 # Pre-pull one or more models
-ollama pull llama3.2
-#ollama pull gemma3:4b
+#ollama pull llama3.2
+ollama pull gemma3:4b
+ollama pull phi4:14b
+ollama pull deepseek-coder:6.7b
 
 # Keep Ollama running
 wait "$pid"
