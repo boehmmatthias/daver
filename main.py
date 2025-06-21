@@ -8,11 +8,11 @@ from queryjudge.query_judge import judge_sql_responses
 from schemaanalyzer.schema_analyzer import get_analyzed_schema
 
 if __name__ == "__main__":
-    user_prompt = 'Find all competitors from the United States'
+    user_prompt = 'Find all athletes from the United States'
     print('User prompt: 🗣️ ', user_prompt)
     
     
-    processed_query = nlparser.get_processed_query(user_prompt, model='phi4:14b')
+    processed_query = nlparser.get_processed_query(user_prompt, model='phi4-mini:3.8b')
     print('Processed query: 🔍 ', processed_query)
 
     db_config = {
@@ -22,7 +22,7 @@ if __name__ == "__main__":
         'password': 'pizzatime',
         'database': 'daver_db'
     }
-    reanalyze_schema = True
+    reanalyze_schema = False
     if reanalyze_schema:
         # If reanalyzing schema, we need to query the database for the schema
         analyzed_schema = get_analyzed_schema(db_config=db_config, model='gemma3:4b')

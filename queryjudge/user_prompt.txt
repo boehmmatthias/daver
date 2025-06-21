@@ -1,4 +1,7 @@
-Looking at this request for an LLM that should generate SQL, which response is more suitable ?
+Look at the generated SQL queries and choose the one that best answers the user's request based on the schema provided.
+
+User input: <USER_QUERY>
+
 This is the schema information: <SCHEMA>
 
 <RESPONSES>

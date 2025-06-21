@@ -1,9 +1,9 @@
 Analyse the schema for tables and properties. Select, Join and Filter based on the request in Input1.
 Use only the tables and Information contained in Input 2
 Generate a complete SQL query that fulfills these requirements.
-Do not add any unnecessary constraints to the query that are asked for in the natural language query.
+Do not add any unnecessary constraints to the query that are not asked for in the natural language query.
 Only generate valid SQL.
-Do not make up tables.
+Do not make up tables or fields.
 Do not write text or explanations.
 
 Input 1: Natural Language Query

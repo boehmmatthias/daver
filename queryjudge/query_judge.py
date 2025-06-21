@@ -42,7 +42,7 @@ def judge_sql_responses(sql_responses: list[str], user_nl_query: str, processed_
     
     templates_str = '\n\n'.join(templates)
     # replace user prompt placeholder with the actual processed query
-    user_prompt = user_prompt.replace('<RESPONSES>', templates_str)
+    user_prompt = user_prompt.replace('<RESPONSES>', templates_str).replace('<USER_QUERY>', user_nl_query)
     messages = build_messages(system_prompt, user_prompt)
         
         
@@ -62,7 +62,7 @@ def judge_sql_responses(sql_responses: list[str], user_nl_query: str, processed_
             "required": ["choice"]
         },
         options={
-            # 'temperature': 0.1
+            'temperature': 0.05,
             'num_ctx': 40960
         }
     )

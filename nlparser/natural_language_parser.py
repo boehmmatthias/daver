@@ -18,10 +18,10 @@ def build_messages(system_prompt: str, few_shot_examples: str, user_prompt: str)
             'role': 'system',
             'content': system_prompt
         },
-        #{
-        #    'role': 'assistant',
-        #    'content': few_shot_examples
-        #},
+        {
+            'role': 'assistant',
+            'content': few_shot_examples
+        },
         {
             'role': 'user',
             'content': user_prompt

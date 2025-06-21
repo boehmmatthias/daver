@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import ollama
 import sys
-
+import mysql.connector
 from nlparser.natural_language_parser import get_processed_query
 from querygenerator.query_generator import get_database_query
 from queryjudge.query_judge import judge_sql_responses
@@ -105,14 +105,24 @@ def process_chat_query(message: str, chat_history: List[ChatMessage], schema_ana
     n_queries = 10
 
     sql_responses = [get_database_query(processed_query, schema_analysis, model='deepseek-coder:6.7b').replace('\n',' ') for _ in range(n_queries)]
-
-    response = judge_sql_responses(sql_responses, message, processed_query, schema_analysis, model='deepseek-coder:6.7b')
-    resp_json = json.loads(response)
-    if 'thinking' in resp_json:
-        print(f'Thinking: {resp_json["thinking"]}')
-    response = resp_json['choice']
-    idx = int(response.lower().removeprefix('response '))
-    return sql_responses[idx]
+    print(f'SQL responses:')
+    for response in sql_responses:
+        print(f' - {response}')
+    valid_queries = check_queries_against_database(sql_responses, load_config()['database'])
+    print(f'Valid queries:')
+    for query in valid_queries:
+        print(f' - {query}')
+    if len(valid_queries) > 1:
+        response = judge_sql_responses(valid_queries, message, processed_query, schema_analysis, model='deepseek-coder:6.7b')
+        resp_json = json.loads(response)
+        if 'thinking' in resp_json:
+            print(f'Thinking: {resp_json["thinking"]}')
+        response = resp_json['choice']
+        idx = int(response.lower().removeprefix('response '))
+        return_query = valid_queries[idx]
+    else:
+        return_query = valid_queries[0] if valid_queries else ''
+    return return_query
 
 # API Endpoints
 
@@ -169,9 +179,36 @@ def analyze_schema():
             message=f"Analysis failed: {str(e)}"
         )
 
+
+def check_queries_against_database(queries: List[str], db_config: dict) -> List[str]:
+    """Check if the generated SQL queries are valid against the database"""
+    connection = None
+    cursor = None
+    valid_queries = []
+
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor(buffered=True)
+        for query in queries:
+            try:
+                cursor.execute(query)
+                valid_queries.append(query)
+            except mysql.connector.Error as e:
+                print(f"Invalid query: {query} - Error: {str(e)}")
+
+    except mysql.connector.Error as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+    return valid_queries
+
+
 def fetch_data(sql_query: str, db_config: dict) -> dict:
     """Fetch data from the database using the generated SQL query"""
-    import mysql.connector
     connection = None
     cursor = None
     data = {}

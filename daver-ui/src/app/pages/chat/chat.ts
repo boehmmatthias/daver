@@ -38,8 +38,9 @@ export class Chat implements AfterViewChecked {
   isLoading = signal(false);
   userInput = signal('');
   errorMessage = signal<string | null>(null);
-  debugMode = signal(false);
+  debugMode = signal(true);
   lastUserMessage = signal<string>(''); // Store the last user message for retry
+  previousMessageCount = signal(0); // Track previous message count for scroll behavior
 
   private daverApi = inject(DaverApi);
 
@@ -49,7 +50,12 @@ export class Chat implements AfterViewChecked {
   });
 
   ngAfterViewChecked() {
-    this.scrollToBottom();
+    // Only scroll to bottom if new messages were added
+    const currentMessageCount = this.messages().length;
+    if (currentMessageCount > this.previousMessageCount()) {
+      this.scrollToBottom();
+      this.previousMessageCount.set(currentMessageCount);
+    }
   }
 
   onKeyDown(event: KeyboardEvent): void {
