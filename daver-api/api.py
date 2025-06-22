@@ -19,7 +19,7 @@ import os
 
 from schemaanalyzer.schema_analyzer import get_analyzed_schema
 
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://ollama:11434")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST") or "http://ollama:11434"
 app = FastAPI(title="Daver API", description="Natural Language Database Query System")
 
 # CORS middleware for Angular frontend
@@ -72,19 +72,6 @@ def load_config():
 def get_analysis_path():
     """Get path to the schema analysis file"""
     return os.path.join(ANALYSIS_DIR, "schema_analysis.yaml")
-
-def call_ollama(model: str, prompt: str, system_prompt: str = None) -> str:
-    """Helper function to call Ollama models"""
-    try:
-        messages = []
-        if system_prompt:
-            messages.append({"role": "system", "content": system_prompt})
-        messages.append({"role": "user", "content": prompt})
-        
-        response = ollama.chat(model=model, messages=messages)
-        return response['message']['content']
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Ollama error: {str(e)}")
 
 def analyze_schema_with_ollama(config: dict) -> dict:
     """Analyze database schema using Ollama"""
@@ -231,6 +218,7 @@ def fetch_data(sql_query: str, db_config: dict) -> dict:
 async def chat(request: ChatRequest):
     """Chat with the database system"""
     try:
+        print(f"Using Ollama host: {OLLAMA_HOST}")
         # Load schema analysis
         analysis_path = get_analysis_path()
         if not os.path.exists(analysis_path):

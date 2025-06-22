@@ -31,7 +31,7 @@ services:
       - "8000:8000"
     environment:
       # point at the internal Docker service by default:
-      - OLLAMA_HOST=${OLLAMA_HOST}
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://ollama:11434}
     volumes:
       # persist uploaded config & analysis between restarts
       - ./daver-api/uploads:/app/uploads
@@ -43,7 +43,8 @@ services:
     image: ollama/ollama:latest
     container_name: daver_ollama
     restart: unless-stopped
-
+    profiles:
+      - local-ollama
     # Expose default Ollama REST API port
     ports:
       - "11434:11434"

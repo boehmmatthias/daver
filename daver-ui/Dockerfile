@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json angular.json tsconfig*.json ./
 RUN npm ci
 
-COPY .. .
+COPY . .
 RUN npm run build
 
 FROM nginx:1.25-alpine
