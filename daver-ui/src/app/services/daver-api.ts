@@ -25,7 +25,7 @@ export class DaverApi {
       observe: 'events'
     });
   }
-
+ 
   sendChatMessage(message: string): Observable<ChatResponse> {
     const request: ChatRequest = {
       message: message
