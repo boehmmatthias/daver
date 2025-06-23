@@ -40,19 +40,19 @@ services:
       # if you also spin up a database
       - db
   ollama:
-    image: ollama/ollama:latest
-    container_name: daver_ollama
-    restart: unless-stopped
+    build:
+      context: ./daver-ollama
+      dockerfile: Dockerfile
     profiles:
       - local-ollama
+    container_name: daver_ollama
+    restart: unless-stopped
     # Expose default Ollama REST API port
     ports:
       - "11434:11434"
     # Persist downloaded models & metadata here
     volumes:
       - ollama_data:/root/.ollama
-      - ./ollama_entrypoint.sh:/entrypoint.sh
-    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
 
 volumes:
   db_data:

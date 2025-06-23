@@ -30,7 +30,8 @@ There are 2 options for setting up the AI models:
    - Install [Ollama](https://ollama.com/docs/installation) on your machine.
    - Download the required models using:
      ```bash
-     ollama pull phi4:14b
+     ollama pull phi4-mini:3.8b
+     ollama pull gemma3:4b
      ollama pull deepseek-coder:6.7b
      ```
      
