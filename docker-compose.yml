@@ -15,13 +15,6 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./db/init:/docker-entrypoint-initdb.d
-  web:
-    build:
-        context: ./daver-ui
-        dockerfile: Dockerfile
-    ports:
-      - "8080:80"
-    restart: unless-stopped
 
   api:
     build:

@@ -1,10 +1,8 @@
-<img src="https://github.com/user-attachments/assets/560aed51-cc84-457d-b928-484b6c1d060f" width="500" height="500"/>
+<div style="justify-content: center; display: flex; align-items: center;">
+    <img src="https://github.com/user-attachments/assets/560aed51-cc84-457d-b928-484b6c1d060f" width="500" height="500" alt="daver"/>
+</div>
 
 # Daver - A conversational SQL interface for fetching data using natural language
-
-## Project Members
-- Matthias Böhm, K11907932
-- Lukas Kurz, K12007739
 
 ## Setting up a local instance of daver
 
@@ -56,7 +54,12 @@ A database with some sample data will be created automatically. The test data wa
 
 ### Accessing the Application
 
-You can access the application at `http://localhost:8080` in your web browser. The application provides a simple interface to interact with the database using natural language queries.
+
+To test the application, you can use the daver testing UI: https://github.com/boehmmatthias/daver-ui
+
+Start the testing UI like mentioned in the projects README.md.
+After that you can access the application at `http://localhost:8080` in your web browser. The application provides a simple interface to interact with the database using natural language queries.
+
 
 For the database config file you can use the daver_sample_config.yaml file in the root directory.
 
@@ -69,3 +72,4 @@ database:
   password: "pizzatime"
   database: "daver_db"
 ```
+
